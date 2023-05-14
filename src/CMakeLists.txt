@@ -25,6 +25,7 @@ endmacro(create_executable ROBOT_NAME)
 
 # Dynamic Interface
 create_executable(fr3_joint_torque)
+create_executable(fr3_task_velocity)
 
 
 
