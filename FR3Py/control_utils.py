@@ -19,6 +19,19 @@ class RobotModel():
         '''
         gets the q, dq from the robot and compute the robot kinematic and 
         dynamic parameters and returns to the user. 
+        
+        state contains:
+        -------------------------------------
+        q: joint position
+        dq: joint velocity
+        f(x): drift
+        g(x): control influence matrix
+        G: gravitational vector
+        J_EE: end-effector Jacobian
+        dJ_EE: time derivative of end-effector Jacobian
+        pJ_EE: pseudo-inverse of end-effector Jacobian
+        R_EE: end-effector rotation matrix
+        P_EE: end-effector position vector
         '''
         assert q.shape == (9,), 'q vector should be 9,'
         assert dq.shape == (9,), 'dq vector should be 9,'
