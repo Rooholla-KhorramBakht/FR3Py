@@ -38,7 +38,7 @@ class FR3Sim(Env):
 
         # Load plane
         p.setAdditionalSearchPath(pybullet_data.getDataPath())
-        p.loadURDF("plane.urdf")
+        self.planeID = p.loadURDF("plane.urdf")
 
         # Load Franka Research 3 Robot
         model_name = "fr3"
