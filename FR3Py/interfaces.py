@@ -8,18 +8,18 @@ from FR3Py.lcm_msgs.fr3_states import fr3_state
 from FR3Py.lcm_msgs.fr3_commands import fr3_cmd
 import lcm
 
+
 class FR3Real:
     def __init__(
         self,
-        robot_name = 'franka',
-        interface_type = 'joint_velocity',
+        robot_name="franka",
+        interface_type="joint_velocity",
     ):
-        
         self.state = None
         self.trigger_timestamp = 0
         self.robot_name = robot_name
-        self.state_topic_name = f'{robot_name}_state'
-        self.command_topic_name = f'{robot_name}_command'
+        self.state_topic_name = f"{robot_name}_state"
+        self.command_topic_name = f"{robot_name}_command"
         self.states_msg = fr3_state()
         self.command_msg = fr3_cmd()
         self.user_callback = None
@@ -36,33 +36,29 @@ class FR3Real:
     def LCMThreadFunc(self):
         while self.running:
             rfds, wfds, efds = select.select([self.lc.fileno()], [], [], 0.5)
-            if rfds: # Handle only if there are data in the interface file
+            if rfds:  # Handle only if there are data in the interface file
                 self.lc.handle()
 
     def update(self, channel, data):
         msg = fr3_state.decode(data)
         self.trigger_timestamp = np.array(msg.timestamp) / 1000000
-        q = np.hstack([msg.q,np.zeros((2))])
-        dq = np.hstack([msg.dq,np.zeros((2))])
-        T = np.hstack([msg.T,np.zeros((2))])
-        self.joint_state = {
-            'q':q,
-            'dq':dq,
-            'T':T
-        }
-        # Call an arbitrary user callback 
+        q = np.hstack([msg.q, np.zeros((2))])
+        dq = np.hstack([msg.dq, np.zeros((2))])
+        T = np.hstack([msg.T, np.zeros((2))])
+        self.joint_state = {"q": q, "dq": dq, "T": T}
+        # Call an arbitrary user callback
         if self.user_callback is not None:
             self.user_callback(self.joint_state)
-        
-    def readStates(self):
-        if time.time()-self.trigger_timestamp > 0.2:
+
+    def get_state(self):
+        if time.time() - self.trigger_timestamp > 0.2:
             self.state = None
             return None
         else:
             return self.joint_state
 
-    def setCommand(self, cmd):
-        self.command_msg.timestamp = int(self.trigger_timestamp*1000000)
+    def send_joint_command(self, cmd):
+        self.command_msg.timestamp = int(self.trigger_timestamp * 1000000)
         self.command_msg.cmd = cmd.tolist()
         self.lc.publish(self.command_topic_name, self.command_msg.encode())
         self.cmd_log = cmd
@@ -72,4 +68,4 @@ class FR3Real:
         self.lcm_thread.join()
         self.lc.unsubscribe(self.subscription)
         del self.lc
-        print("Interface Closed.")        
+        print("Interface Closed.")
