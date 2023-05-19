@@ -1,0 +1,45 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/franka-ws/manipulation/franka_ws/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/apriltag_ros/apriltag_ros/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/moveit/moveit_planners/chomp/chomp_motion_planner/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/franka_ros/franka_control/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/franka_ros/franka_example_controllers/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/franka_ros/franka_gazebo/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/franka_ros/franka_gripper/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/franka_ros/franka_hw/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/geometric_shapes/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/moveit/moveit_planners/chomp/chomp_interface/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/moveit_resources/prbt_ikfast_manipulator_plugin/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/moveit/moveit_ros/benchmarks/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/moveit/moveit_plugins/moveit_ros_control_interface/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/moveit/moveit_ros/move_group/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/moveit/moveit_ros/occupancy_map_monitor/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/moveit/moveit_ros/robot_interaction/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/moveit/moveit_ros/moveit_servo/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/moveit/moveit_setup_assistant/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/moveit/moveit_plugins/moveit_simple_controller_manager/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/moveit_visual_tools/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/moveit/moveit_planners/pilz_industrial_motion_planner/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/moveit/moveit_planners/pilz_industrial_motion_planner_testutils/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/realsense-ros/realsense2_camera/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/rviz_visual_tools/include/**",
+        "/home/franka-ws/manipulation/franka_ws/src/srdfdom/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
