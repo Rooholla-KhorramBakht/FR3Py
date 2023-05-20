@@ -7,41 +7,6 @@ import pinocchio as pin
 from FR3Py.lcm_msgs.fr3_states import fr3_state
 from FR3Py.lcm_msgs.fr3_commands import fr3_cmd
 import lcm
-import subprocess
-
-
-def configure_multicast(device_name):
-    """
-    Configures multicast settings for a given network device.
-
-    @param device_name: The name of the network device to configure.
-    @type device_name: str
-
-    @raises subprocess.CalledProcessError: If the execution of any command fails.
-
-    @note:
-        This function requires administrative privileges to execute commands like 'route' and 'ifconfig'.
-        Run the Python script as a superuser or provide the necessary credentials.
-
-    @example:
-        device = 'eth0'
-        configure_multicast(device)
-    """
-
-    add_route_command = [
-        "route",
-        "add",
-        "-net",
-        "224.0.0.0",
-        "netmask",
-        "240.0.0.0",
-        "dev",
-        device_name,
-    ]
-    enable_multicast_command = ["sudo", "ifconfig", device_name, "multicast"]
-
-    subprocess.run(add_route_command, check=True)
-    subprocess.run(enable_multicast_command, check=True)
 
 
 class FR3Real:
