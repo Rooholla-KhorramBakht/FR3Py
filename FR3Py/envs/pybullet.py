@@ -4,6 +4,7 @@ import pybullet as p
 import pybullet_data
 from gymnasium import Env, spaces
 from FR3Py import getDataPath
+from FR3Py.controllers.utils import RobotModel
 
 
 class FR3Sim(Env):
@@ -52,13 +53,13 @@ class FR3Sim(Env):
         self.active_joint_ids = [0, 1, 2, 3, 4, 5, 6, 10, 11]
 
         # Disable the velocity control on the joints as we use torque control.
-        if self.mode == "torque":
-            p.setJointMotorControlArray(
-                self.robotID,
-                self.active_joint_ids,
-                p.VELOCITY_CONTROL,
-                forces=np.zeros(9),
-            )
+        p.setJointMotorControlArray(
+            self.robotID,
+            self.active_joint_ids,
+            p.VELOCITY_CONTROL,
+            forces=np.zeros(9),
+        )
+        self.robot = RobotModel()
 
         # Get number of joints
         self.n_j = p.getNumJoints(self.robotID)
@@ -147,9 +148,9 @@ class FR3Sim(Env):
 
         return q, dq
 
-    def send_joint_command(self, cmd, posGain=1, velGain=1.5):
+    def send_joint_command(self, cmd):
+        zeroGains = cmd.shape[0] * (0.0,)
         if self.mode == "torque":
-            zeroGains = cmd.shape[0] * (0.0,)
             p.setJointMotorControlArray(
                 self.robotID,
                 self.active_joint_ids,
@@ -159,14 +160,22 @@ class FR3Sim(Env):
                 velocityGains=zeroGains,
             )
         else:
-            posoGains = cmd.shape[0] * (posGain,)
-            velGains = cmd.shape[0] * (velGain,)
+            # Run a PD with gravity compensation
+            q, dq = self.get_state()
+            info = self.robot.getInfo(q, dq)
+            G = info["G"][:, np.newaxis]
+            # compute torque command
+            τ = (
+                6.0 * (cmd[:, np.newaxis] - dq[:, np.newaxis])
+                + G
+                - 0.1 * dq[:, np.newaxis]
+            )
+
             p.setJointMotorControlArray(
                 self.robotID,
                 self.active_joint_ids,
-                p.VELOCITY_CONTROL,
-                # forces=np.ones(9) * 100,
-                targetVelocities=cmd,
-                positionGains=posoGains,
-                velocityGains=velGains,
+                p.TORQUE_CONTROL,
+                forces=τ,
+                positionGains=zeroGains,
+                velocityGains=zeroGains,
             )

@@ -3,6 +3,7 @@ from FR3Py.solvers.qp_solver import QPSolver
 import numpy as np
 import numpy.linalg as LA
 from scipy.spatial.transform import Rotation as R
+from FR3Py.controllers.utils import RobotModel
 
 
 def axis_angle_from_rot_mat(rot_mat):
@@ -42,7 +43,7 @@ class WaypointController:
             self.p_start = _p_start[:, np.newaxis]
 
             # get target rotation and position
-            self.p_end = np.array([[1.2], [0], [0.35]])
+            self.p_end = np.array([[0.5], [0], [0.35]])
             self.R_end = get_R_end_from_start(0, -90, 0, self.R_start)
             self.movement_duration = 10.0
 
@@ -82,7 +83,7 @@ class WaypointController:
             "p_error": p_error,
             "p_current": p_current,
             "dp_target": dp_target,
-            "Kp": 0.1 * np.eye(6),
+            "Kp": 5 * np.eye(6),
             "dq_nominal": dq_nominal,
             "nullspace_proj": np.eye(9) - pinv_jac @ jacobian,
         }
