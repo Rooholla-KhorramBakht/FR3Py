@@ -14,17 +14,16 @@ def configure_multicast(device_name):
     """
     Configures multicast settings for a given network device.
 
-    Args:
-        device_name (str): The name of the network device to configure.
+    @param device_name: The name of the network device to configure.
+    @type device_name: str
 
-    Raises:
-        subprocess.CalledProcessError: If the execution of any command fails.
+    @raises subprocess.CalledProcessError: If the execution of any command fails.
 
-    Note:
+    @note:
         This function requires administrative privileges to execute commands like 'route' and 'ifconfig'.
         Run the Python script as a superuser or provide the necessary credentials.
 
-    Example:
+    @example:
         device = 'eth0'
         configure_multicast(device)
     """
@@ -47,8 +46,9 @@ def configure_multicast(device_name):
 
 class FR3Real:
     """
-    Class for communication with the Franka Emika FR3 robot.
-    It uses LCM to send joint velocity or joint torque commands to the robot and receive joint states (joint angle, velocity, and torque).
+    @brief Class for communication with the Franka Emika FR3 robot.
+    It uses LCM to send joint velocity or joint torque commands to
+    the robot and receive joint states (joint angle, velocity, and torque).
     """
 
     def __init__(
@@ -57,9 +57,11 @@ class FR3Real:
         interface_type="joint_velocity",
     ):
         """
-        Initialize an instance of the class.
-        :param robot_name: A unique id used to generate the LCM message topic names of the robot. Defaults to "franka".
-        :param interface_type: Determines whether to send joint velocities or joint torques to the robot as command. Defaults to "joint_velocity".
+        @brief Initialize an instance of the class.
+        @param robot_name A unique id used to generate the LCM message
+        topic names of the robot. Defaults to "franka".
+        @param interface_type Determines whether to send joint velocities
+        or joint torques to the robot as command. Defaults to "joint_velocity".
         """
         self.state = None
         self.trigger_timestamp = 0
@@ -81,7 +83,7 @@ class FR3Real:
 
     def LCMThreadFunc(self):
         """
-        Function that runs on a separate thread and handles LCM communication.
+        @brief Function that runs on a separate thread and handles LCM communication.
         `lc.handle()` function is called when there are data available to be processed.
         """
         while self.running:
@@ -91,11 +93,13 @@ class FR3Real:
 
     def update(self, channel, data):
         """
-        Callback function that executes whenever a new robot state is received from the C++ driver.
-        It decodes the incoming messages, updates the robot's joint state (position, velocity, and torque),
-        and calls the user callback (if set) with the updated joint state.
-        :param channel: The name of the LCM channel
-        :param data: The LCM message data
+        @brief Callback function that executes whenever a new robot state
+        is received from the C++ driver.
+        It decodes the incoming messages, updates the robot's joint state
+        (position, velocity, and torque), and calls the user callback
+        (if set) with the updated joint state.
+        @param channel The name of the LCM channel
+        @param data The LCM message data
         """
         msg = fr3_state.decode(data)
         self.trigger_timestamp = np.array(msg.timestamp) / 1000000
@@ -109,8 +113,9 @@ class FR3Real:
 
     def get_state(self):
         """
-        Get the current joint angle, velocity, and torque of the robot.
-        Returns the joint state if the latest update was received less than 0.2 seconds ago; otherwise, returns None.
+        @brief Get the current joint angle, velocity, and torque of the robot.
+        Returns the joint state if the latest update was received less than 0.2 seconds ago;
+        otherwise, returns None.
         """
         if time.time() - self.trigger_timestamp > 0.2:
             self.state = None
@@ -120,11 +125,12 @@ class FR3Real:
 
     def send_joint_command(self, cmd):
         """
-        Send a joint command to the robot.
-        The command is timestamped and then published on the command topic which is received by the C++ driver.
-        Depending on the interface_type, the command is interpreted by the driver as torque or joint velocity.
+        @brief Send a joint command to the robot.
+        The command is timestamped and then published on the command topic
+        which is received by the C++ driver. Depending on the interface_type,
+        the command is interpreted by the driver as torque or joint velocity.
         The command that was sent is also stored in `self.cmd_log`.
-        :param cmd: The joint command to send
+        @param cmd The joint command to send
         """
         self.command_msg.timestamp = int(self.trigger_timestamp * 1000000)
         self.command_msg.cmd = cmd.tolist()
@@ -133,7 +139,8 @@ class FR3Real:
 
     def close(self):
         """
-        Stop the LCM thread, unsubscribe from the LCM topic, and effectively shut down the interface.
+        @brief Stop the LCM thread, unsubscribe from the LCM topic,
+        and effectively shut down the interface.
         """
         self.running = False
         self.lcm_thread.join()
