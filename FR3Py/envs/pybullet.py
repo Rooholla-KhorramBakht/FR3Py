@@ -166,9 +166,9 @@ class FR3Sim(Env):
             G = info["G"][:, np.newaxis]
             # compute torque command
             τ = (
-                6.0 * (cmd[:, np.newaxis] - dq[:, np.newaxis])
+                5.0 * (cmd[:, np.newaxis] - dq[:, np.newaxis])
                 + G
-                - 0.1 * dq[:, np.newaxis]
+                - 0.5 * dq[:, np.newaxis]
             )
 
             p.setJointMotorControlArray(
