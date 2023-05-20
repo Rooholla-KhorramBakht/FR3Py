@@ -147,7 +147,8 @@ int main(int argc, char** argv)
       std::array<double, 7> vel_d_calculated;
 
       // Apply the control command to the robot only if the command is recent enough
-      if (control_lag < 0.2*1e7)
+      // std::cout << control_lag << std::endl;
+      if (control_lag < 0.1*1e7)
       {
         for (size_t i = 0; i < 7; i++)
         {

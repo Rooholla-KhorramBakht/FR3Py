@@ -81,6 +81,7 @@ int main(int argc, char** argv)
   // Load the DGM parameters and start the graph in a separate thread
   std::string robot_name = std::string(argv[2]);
 
+  // lcm::LCM lcm("udpm://239.255.76.67:7667?ttl=1");
   lcm::LCM lcm("udpm://239.255.76.67:7667?ttl=1");
   if (!lcm.good())
   {
