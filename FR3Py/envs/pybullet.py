@@ -8,6 +8,10 @@ from FR3Py.controllers.utils import RobotModel
 
 
 class FR3Sim(Env):
+    """
+    A simulation class for the Franka Research 3 robot. The class is a subclass of gymnasium environment.
+    The class allows to simulate the robot in two control modes in the joint space: velocity and torque.
+    """
     metadata = {
         "render_modes": ["human", "rgb_array"],
     }
@@ -19,6 +23,14 @@ class FR3Sim(Env):
         record_path=None,
         Ts=0.001,
     ):
+        """
+        Class constructor that sets the control mode, the client and initializes the robot and its environment.
+        
+        @param mode: (str) Control mode for the robot, should be either "velocity" or "torque".
+        @param render_mode: (str, optional) Mode for rendering. If set to "human", uses GUI for rendering. Default is None.
+        @param record_path: (str, optional) Path to save recording. Default is None.
+        @param Ts: (float) Time step for simulation. Default is 0.001.
+        """
         assert mode in [
             "velocity",
             "torque",
@@ -101,6 +113,16 @@ class FR3Sim(Env):
         cameraPitch=-16.2,
         lookat=[0.0, 0.0, 0.0],
     ):
+        """
+        Resets the robot to its initial configuration and starts recording if record path is set.
+
+        @param seed: (int, optional) Seed for random number generator. Default is None.
+        @param options: (dict, optional) Optional parameters. Default is None.
+        @param cameraDistance: (float) Distance of the camera for recording. Default is 1.4.
+        @param cameraYaw: (float) Yaw of the camera for recording. Default is 66.4.
+        @param cameraPitch: (float) Pitch of the camera for recording. Default is -16.2.
+        @param lookat: (list) Focus point of the camera for recording. Default is [0.0, 0.0, 0.0].
+        """
         super().reset(seed=seed)
 
         target_joint_angles = [
@@ -128,17 +150,31 @@ class FR3Sim(Env):
             )
 
     def step(self, action):
+        """
+        Applies the action command to the robot and steps the simulation forward.
+
+        @param action: (numpy.ndarray, shape=(9,)) The action to be applied on the robot in joint space.
+        @return: The joint angles (numpy.ndarray, shape=(9,)) and velocities (numpy.ndarray, shape=(9,)) of the robot.
+        """
         self.send_joint_command(action)
         p.stepSimulation()
         q, dq = self.get_state()
         return q, dq
 
     def close(self):
+        """
+        Closes the simulation environment and stops the recording if it is running.
+        """
         if self.record_path is not None:
             p.stopStateLogging(self.loggingId)
         p.disconnect()
 
     def get_state(self):
+        """
+        Fetches the state of the robot.
+
+        @return: Joint angles (numpy.ndarray, shape=(9,)) and velocities (numpy.ndarray, shape=(9,)) of the robot.
+        """
         q = np.zeros(9)
         dq = np.zeros(9)
 
@@ -149,6 +185,11 @@ class FR3Sim(Env):
         return q, dq
 
     def send_joint_command(self, cmd):
+        """
+        Sends joint commands to the robot depending on the control mode.
+
+        @param cmd: (numpy.ndarray, shape=(9,)) The command to be sent to the robot in joint space.
+        """
         zeroGains = cmd.shape[0] * (0.0,)
         if self.mode == "torque":
             p.setJointMotorControlArray(
