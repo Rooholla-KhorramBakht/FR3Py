@@ -7,14 +7,60 @@ import pinocchio as pin
 from FR3Py.lcm_msgs.fr3_states import fr3_state
 from FR3Py.lcm_msgs.fr3_commands import fr3_cmd
 import lcm
+import subprocess
+
+
+def configure_multicast(device_name):
+    """
+    Configures multicast settings for a given network device.
+
+    Args:
+        device_name (str): The name of the network device to configure.
+
+    Raises:
+        subprocess.CalledProcessError: If the execution of any command fails.
+
+    Note:
+        This function requires administrative privileges to execute commands like 'route' and 'ifconfig'.
+        Run the Python script as a superuser or provide the necessary credentials.
+
+    Example:
+        device = 'eth0'
+        configure_multicast(device)
+    """
+
+    add_route_command = [
+        "route",
+        "add",
+        "-net",
+        "224.0.0.0",
+        "netmask",
+        "240.0.0.0",
+        "dev",
+        device_name,
+    ]
+    enable_multicast_command = ["sudo", "ifconfig", device_name, "multicast"]
+
+    subprocess.run(add_route_command, check=True)
+    subprocess.run(enable_multicast_command, check=True)
 
 
 class FR3Real:
+    """
+    Class for communication with the Franka Emika FR3 robot.
+    It uses LCM to send joint velocity or joint torque commands to the robot and receive joint states (joint angle, velocity, and torque).
+    """
+
     def __init__(
         self,
         robot_name="franka",
         interface_type="joint_velocity",
     ):
+        """
+        Initialize an instance of the class.
+        :param robot_name: A unique id used to generate the LCM message topic names of the robot. Defaults to "franka".
+        :param interface_type: Determines whether to send joint velocities or joint torques to the robot as command. Defaults to "joint_velocity".
+        """
         self.state = None
         self.trigger_timestamp = 0
         self.robot_name = robot_name
@@ -34,12 +80,23 @@ class FR3Real:
         print("Interface Running...")
 
     def LCMThreadFunc(self):
+        """
+        Function that runs on a separate thread and handles LCM communication.
+        `lc.handle()` function is called when there are data available to be processed.
+        """
         while self.running:
             rfds, wfds, efds = select.select([self.lc.fileno()], [], [], 0.5)
             if rfds:  # Handle only if there are data in the interface file
                 self.lc.handle()
 
     def update(self, channel, data):
+        """
+        Callback function that executes whenever a new robot state is received from the C++ driver.
+        It decodes the incoming messages, updates the robot's joint state (position, velocity, and torque),
+        and calls the user callback (if set) with the updated joint state.
+        :param channel: The name of the LCM channel
+        :param data: The LCM message data
+        """
         msg = fr3_state.decode(data)
         self.trigger_timestamp = np.array(msg.timestamp) / 1000000
         q = np.hstack([msg.q, np.zeros((2))])
@@ -51,6 +108,10 @@ class FR3Real:
             self.user_callback(self.joint_state)
 
     def get_state(self):
+        """
+        Get the current joint angle, velocity, and torque of the robot.
+        Returns the joint state if the latest update was received less than 0.2 seconds ago; otherwise, returns None.
+        """
         if time.time() - self.trigger_timestamp > 0.2:
             self.state = None
             return None
@@ -58,12 +119,22 @@ class FR3Real:
             return self.joint_state
 
     def send_joint_command(self, cmd):
+        """
+        Send a joint command to the robot.
+        The command is timestamped and then published on the command topic which is received by the C++ driver.
+        Depending on the interface_type, the command is interpreted by the driver as torque or joint velocity.
+        The command that was sent is also stored in `self.cmd_log`.
+        :param cmd: The joint command to send
+        """
         self.command_msg.timestamp = int(self.trigger_timestamp * 1000000)
         self.command_msg.cmd = cmd.tolist()
         self.lc.publish(self.command_topic_name, self.command_msg.encode())
         self.cmd_log = cmd
 
     def close(self):
+        """
+        Stop the LCM thread, unsubscribe from the LCM topic, and effectively shut down the interface.
+        """
         self.running = False
         self.lcm_thread.join()
         self.lc.unsubscribe(self.subscription)
