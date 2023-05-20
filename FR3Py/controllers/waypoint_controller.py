@@ -38,7 +38,7 @@ class WaypointController:
         # Get the robot paramters for the given state
         info = self.robot.getInfo(q, dq)
         if T_cmd is not None:
-            self.p_cmd = T_cmd[0:3, -1]
+            self.p_cmd = T_cmd[0:3, -1].reshape(3, 1)
             self.R_cmd = T_cmd[0:3, 0:3]
 
         if not self.initialized:

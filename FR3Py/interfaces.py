@@ -37,7 +37,7 @@ class FR3Real:
         self.command_msg = fr3_cmd()
         self.user_callback = None
         # Threading Interface for handleing LCM
-        self.lc = lcm.LCM()
+        self.lc = lcm.LCM("udpm://239.255.76.67:7667?ttl=1")
         self.subscription = self.lc.subscribe(self.state_topic_name, self.update)
         self.subscription.set_queue_capacity(1)
         self.running = True
