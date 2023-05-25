@@ -11,9 +11,9 @@ import lcm
 
 class FR3Real:
     """
-    @brief Class for communication with the Franka Emika FR3 robot.
-    It uses LCM to send joint velocity or joint torque commands to
-    the robot and receive joint states (joint angle, velocity, and torque).
+    Class for communication with the Franka Emika FR3 robot.
+    It uses LCM to send joint velocity or joint torque commands 
+    to the robot and receive joint states (joint angle, velocity, and torque).
     """
 
     def __init__(
@@ -22,10 +22,11 @@ class FR3Real:
         interface_type="joint_velocity",
     ):
         """
-        @brief Initialize an instance of the class.
-        @param robot_name A unique id used to generate the LCM message
-        topic names of the robot. Defaults to "franka".
-        @param interface_type Determines whether to send joint velocities
+        Initialize an instance of the class.
+
+        @param robot_name: (str) A unique id used to generate the LCM 
+        message topic names of the robot. Defaults to "franka".
+        @param interface_type: (str) Determines whether to send joint velocities
         or joint torques to the robot as command. Defaults to "joint_velocity".
         """
         self.state = None
@@ -48,7 +49,7 @@ class FR3Real:
 
     def LCMThreadFunc(self):
         """
-        @brief Function that runs on a separate thread and handles LCM communication.
+        Function that runs on a separate thread and handles LCM communication.
         `lc.handle()` function is called when there are data available to be processed.
         """
         while self.running:
@@ -58,13 +59,11 @@ class FR3Real:
 
     def update(self, channel, data):
         """
-        @brief Callback function that executes whenever a new robot state
+        Callback function that executes whenever a new robot state
         is received from the C++ driver.
-        It decodes the incoming messages, updates the robot's joint state
-        (position, velocity, and torque), and calls the user callback
-        (if set) with the updated joint state.
-        @param channel The name of the LCM channel
-        @param data The LCM message data
+
+        @param channel: (str) The name of the LCM channel
+        @param data: (bytes) The LCM message data
         """
         msg = fr3_state.decode(data)
         self.trigger_timestamp = np.array(msg.timestamp) / 1000000
@@ -78,9 +77,12 @@ class FR3Real:
 
     def get_state(self):
         """
-        @brief Get the current joint angle, velocity, and torque of the robot.
-        Returns the joint state if the latest update was received less than 0.2 seconds ago;
-        otherwise, returns None.
+        Get the current joint angle, velocity, and torque of the robot.
+
+        @return: (dict or None) The joint state {'q': (numpy.ndarray, shape=(n,)), 
+        'dq': (numpy.ndarray, shape=(n,)), 'T': (numpy.ndarray, shape=(n,))} 
+        if the latest update was received less than 0.2 seconds ago;
+        otherwise, return None.
         """
         if time.time() - self.trigger_timestamp > 0.2:
             self.state = None
@@ -90,12 +92,9 @@ class FR3Real:
 
     def send_joint_command(self, cmd):
         """
-        @brief Send a joint command to the robot.
-        The command is timestamped and then published on the command topic
-        which is received by the C++ driver. Depending on the interface_type,
-        the command is interpreted by the driver as torque or joint velocity.
-        The command that was sent is also stored in `self.cmd_log`.
-        @param cmd The joint command to send
+        Send a joint command to the robot.
+
+        @param cmd: (numpy.ndarray, shape=(n,)) The joint command to send
         """
         self.command_msg.timestamp = int(self.trigger_timestamp * 1000000)
         self.command_msg.cmd = cmd.tolist()
@@ -104,7 +103,7 @@ class FR3Real:
 
     def close(self):
         """
-        @brief Stop the LCM thread, unsubscribe from the LCM topic,
+        Stop the LCM thread, unsubscribe from the LCM topic,
         and effectively shut down the interface.
         """
         self.running = False
