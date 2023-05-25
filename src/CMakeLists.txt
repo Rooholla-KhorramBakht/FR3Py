@@ -23,15 +23,11 @@ macro(create_executable ROBOT_NAME)
   list(APPEND ALL_SOURCE_TARGETS ${EXECUTABLE_NAME})
 endmacro(create_executable ROBOT_NAME)
 
-# Dynamic Interface
-create_executable(fr3_joint_torque)
-create_executable(fr3_task_velocity)
-create_executable(fr3_joint_velocity)
+# Add excecutables
+create_executable(fr3_joint_interface)
+create_executable(fr3_task_interface)
 
-
-
-
-
-
-
+# Install targets
+install(TARGETS ${ALL_SOURCE_TARGETS}
+        RUNTIME DESTINATION bin)
 
