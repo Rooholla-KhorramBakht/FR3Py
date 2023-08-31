@@ -1,20 +1,13 @@
 # FR3 Gripper Python Interface
 
-## Compile `gripper`
+## Prerequisite 
+We assume libfranka has been installed systemwide. If not, follow through the **Building libfranka** steps [here](https://frankaemika.github.io/docs/installation_linux.html) and at the end, do `sudo make install to install the library system-wide. 
 
-Use the following steps to compile `gripper`
-
+## Installation
+Change to `FR3Py/fr3_gripper` and simply run the following to install the binding for the Python interpreter of interest:
 ```bash
-mkdir build
-cd build
-cmake .. --DFranka_DIR:PATH=/path/to/libfranka/build
-cmake --build .
-cmake --install .
+python3 -m pip install .
 ```
+## Testing
 
-The add `libfranka.so.0.10` and `gripper.cpython-39-x86_64-linux-gnu.so` to your `LD_LIBRARY_PATH` (you could also add this to your `.bashrc` or `.zshrc`), **don't forget to replace `/path/to` with your actual path**
-
-```bash
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/libfranka/build
-export PYTHONPATH=$PYTHONPATH:/path/to/fr3_gripper/install
-```
+Now you can run the `demp.py` script. This script connects to the gripper, initializes it, and commands it to grab a 1cm-wide object. 
