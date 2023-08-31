@@ -17,7 +17,13 @@ set(Python_ADDITIONAL_VERSIONS 3.6)
 # dependencies 
 find_package(lcm REQUIRED)
 find_package(yaml-cpp REQUIRED)
-find_package(Franka REQUIRED)
+# find_package(Franka REQUIRED)
+
+find_package(Franka 0.10.0 QUIET)
+if(NOT Franka_FOUND)
+  find_package(Franka 0.8.0 REQUIRED)
+endif()
+
 find_package(Eigen3 REQUIRED)
 # find_package(Poco REQUIRED COMPONENTS Foundation)
 
