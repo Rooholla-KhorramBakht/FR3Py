@@ -2,23 +2,29 @@
 FR3Py is unified Python simulation and hardware communication environment for Franka FR3 robots.
 
 ## Installation
-There are two packages that need to be installed:
-### Python Interface
+### Prerequisite 
+We assume libfranka has been installed systemwide. If not, follow through the **Building libfranka** steps [here](https://frankaemika.github.io/docs/installation_linux.html) and at the end, do `sudo make install to install the library system-wide. 
+
+### FR3Py
 Simply install with pip in the root directory of the repository:
 ```bash
-pip3 install .
+python3 pip3 install .
 ```
 
 ### C++ Bridge
-The C++ bridge communicates with the robot through the libfranka library. First install the libfranka according to the instructions provided [here](https://frankaemika.github.io/docs/installation_linux.html). Then follow these steps to compile and install the bridge from the root directory of this repository:
+Compile and install the bridge as follows:
 
-```
+```bash
+cd fr3_bridge
 mkdir build && cd build
 cmake ..
 make -j $(( $(nproc) - 1 ))
 make 
 sudo make install
 ```
+
+## Gripper Python Bindings
+To control the gripper with python install the `fr3_gripper` as instructed [here](fr3_gripper/README.md).
 
 ## How to Start
 ### Step1 
