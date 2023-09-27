@@ -37,12 +37,12 @@ class RealSenseCamera:
                        VGA = False,
                        color_fps=60,
                        depth_fps=90, 
-                       enable_imu=True,
+                       enable_imu=False,
                        enable_depth=True, 
                        enable_color=True, 
-                       enable_ir=False, 
+                       enable_ir=True, 
                        emitter_enabled=True,
-                       align_to_color = True):
+                       align_to_color = False):
         
         self.callback_fn = callback_fn
         self.camera_serial_no = camera_serial_no
@@ -140,7 +140,7 @@ class RealSenseCamera:
         """
         frames = self.pipeline.wait_for_frames()
         if self.align_to_color:
-            frames = align.process(frames)
+            frames = self.align.process(frames)
         if frames is None:
             print('Warning: failed to grab frames')
             self.close()
