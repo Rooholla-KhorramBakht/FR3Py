@@ -3,6 +3,35 @@ import pyrealsense2 as rs
 import numpy as np
 
 class RealSenseCamera:
+    """
+    A class for interacting with a RealSense cameras.
+
+    Args:
+        callback_fn (callable, optional): The callback function to process frames.
+        camera_serial_no (str, optional): The serial number of the camera.
+        VGA (bool): Set to True for VGA resolution, False for HD resolution.
+        color_fps (int): Frame rate for color stream (frames per second).
+        depth_fps (int): Frame rate for depth stream (frames per second).
+        enable_imu (bool): Enable or disable IMU stream.
+        enable_depth (bool): Enable or disable depth stream.
+        enable_color (bool): Enable or disable color stream.
+        enable_ir (bool): Enable or disable infrared stream.
+        emitter_enabled (bool): Enable or disable emitter for the depth sensor.
+        align_to_color (bool): Align depth and IR streams to color.
+
+    Attributes:
+        callback_fn (callable, optional): The callback function to process frames.
+        camera_serial_no (str): The serial number of the camera.
+        VGA (bool): True if VGA resolution, False if HD resolution.
+        color_fps (int): Frame rate for color stream (frames per second).
+        depth_fps (int): Frame rate for depth stream (frames per second).
+        enable_imu (bool): True if IMU stream is enabled.
+        enable_depth (bool): True if depth stream is enabled.
+        enable_color (bool): True if color stream is enabled.
+        enable_ir (bool): True if infrared stream is enabled.
+        emitter_enabled (bool): True if emitter is enabled for the depth sensor.
+        align_to_color (bool): True if depth and IR streams are aligned to color.
+    """
     def __init__(self, callback_fn = None, 
                        camera_serial_no=None, 
                        VGA = False,
@@ -12,7 +41,8 @@ class RealSenseCamera:
                        enable_depth=True, 
                        enable_color=True, 
                        enable_ir=False, 
-                       emitter_enabled=True):
+                       emitter_enabled=True,
+                       align_to_color = True):
         
         self.callback_fn = callback_fn
         self.camera_serial_no = camera_serial_no
@@ -21,6 +51,7 @@ class RealSenseCamera:
         self.depth_fps = depth_fps
         self.enable_depth = enable_depth
         self.enable_color = enable_color
+        self.align_to_color = align_to_color
         self.enable_ir = enable_ir
         self.pipeline = rs.pipeline()
         self.config = rs.config()
@@ -75,14 +106,28 @@ class RealSenseCamera:
         self._stop_event = threading.Event()
         self._thread = threading.Thread(target=self._run_grab_frames)
         self._thread.start()
+        #Get stream profiles
+        self.depth_profile = self.profile.get_stream(rs.stream.depth).as_video_stream_profile()
+        self.color_profile = self.profile.get_stream(rs.stream.color).as_video_stream_profile()
+        self.ir1_profile = self.profile.get_stream(rs.stream.infrared,1).as_video_stream_profile()
+        self.ir2_profile = self.profile.get_stream(rs.stream.infrared,2).as_video_stream_profile()
+        #Depth frame aligner
+        self.align = rs.align(rs.stream.color)
+
 
     def _run_grab_frames(self):
+        """
+        Private method to continuously grab frames in a separate thread.
+        """
         while not self._stop_event.is_set():
             self.grab_frames()
             if self.callback_fn is not None:
                 self.callback_fn(self.color_frame, self.depth_frame, self.ir1_frame, self.ir2_frame)
 
     def close(self):
+        """
+        Closes the RealSenseCamera object, stopping the frame grabbing thread and the pipeline.
+        """
         # Stop the thread
         self._stop_event.set()
         self._thread.join()
@@ -90,7 +135,12 @@ class RealSenseCamera:
         self.pipeline.stop()
 
     def grab_frames(self):
+        """
+        Grabs frames from the RealSense camera and stores them in instance variables.
+        """
         frames = self.pipeline.wait_for_frames()
+        if self.align_to_color:
+            frames = align.process(frames)
         if frames is None:
             print('Warning: failed to grab frames')
             self.close()
@@ -117,3 +167,78 @@ class RealSenseCamera:
         else:
             self.accel_frame = None
             self.gyro_frame = None
+
+    def getIntrinsics(self):
+        """
+        Gets the intrinsic parameters of cameras.
+
+        Returns:
+            dict: A dictionary containing intrinsics for RGB, IR1, IR2, and Depth streams.
+        """
+        rgb_intr = self.color_profile.get_intrinsics()
+        ir1_intr = self.ir1_profile.get_intrinsics()
+        ir2_intr = self.ir2_profile.get_intrinsics()
+        depth_intr = self.depth_profile.get_intrinsics()
+
+        ir1_intr = self.parseIntr(ir1_intr)
+        ir2_intr = self.parseIntr(ir2_intr)
+        depth_intr = self.parseIntr(depth_intr)
+        rgb_intr = self.parseIntr(rgb_intr)
+
+        return {'RGB':rgb_intr,
+                'IR1':ir1_intr,
+                'IR2':ir2_intr,
+                'Depth':depth_intr}
+    
+    def getExtrinsics(self):
+        """
+        Gets the extrinsics between different camera streams.
+
+        Returns:
+            dict: A dictionary containing pose of all streams with respect to depth/infrared1.
+        """
+        ir1_T_ir2 = self.ir2_profile.get_extrinsics_to(self.ir1_profile) # Pose of ir2 with respect to ir1
+        ir1_T_rgb = self.color_profile.get_extrinsics_to(self.ir1_profile) # Pose of rgb with respect to ir1
+        ir1_T_ir2 = self.toPose(ir1_T_ir2)
+        ir1_T_rgb = self.toPose(ir1_T_rgb)
+        return {'ir1_T_ir2':ir1_T_ir2,
+                'ir1_T_rgb':ir1_T_rgb}
+
+    def toPose(self,e):
+        """
+        Converts a RealSense extrinsics object to a 4x4 transformation matrix.
+
+        Args:
+            e (rs.extrinsics): The extrinsics object.
+
+        Returns:
+            numpy.ndarray: A 4x4 transformation matrix representing the extrinsics.
+        """
+        R = np.array(e.rotation).reshape(3,3)
+        t = np.array(e.translation).reshape(3,1)
+        return np.vstack([np.hstack([R,t]), np.array([0,0,0,1])])
+
+    def parseIntr(self,intr):
+        """
+        Parses intrinsics data into a dictionary for easier access.
+
+        Args:
+            intr (rs.intrinsics): The intrinsics object.
+
+        Returns:
+            dict: A dictionary containing intrinsics data.
+        """
+        h,w = intr.height, intr.width
+        fx, fy = intr.fx,intr.fy
+        cx,cy = intr.ppx,intr.ppy
+        dist = np.array(intr.coeffs)
+        K = np.array([fx, 0, cx,
+                    0,fy, cy,
+                    0, 0, 1]).reshape(3,3)
+        return {'size':(w,h),
+                'fx':fx,
+                'fy':fy,
+                'cx':cx,
+                'cy':cy,
+                'K':K,
+                'D':dist}   
