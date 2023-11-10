@@ -18,11 +18,11 @@ class fr3_state
     public:
         int64_t    timestamp;
 
-        double     q[7];
+        double     q[9];
 
-        double     dq[7];
+        double     dq[9];
 
-        double     T[7];
+        double     T[9];
 
     public:
         /**
@@ -123,13 +123,13 @@ int fr3_state::_encodeNoHash(void *buf, int offset, int maxlen) const
     tlen = __int64_t_encode_array(buf, offset + pos, maxlen - pos, &this->timestamp, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->q[0], 7);
+    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->q[0], 9);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->dq[0], 7);
+    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->dq[0], 9);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->T[0], 7);
+    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->T[0], 9);
     if(tlen < 0) return tlen; else pos += tlen;
 
     return pos;
@@ -142,13 +142,13 @@ int fr3_state::_decodeNoHash(const void *buf, int offset, int maxlen)
     tlen = __int64_t_decode_array(buf, offset + pos, maxlen - pos, &this->timestamp, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->q[0], 7);
+    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->q[0], 9);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->dq[0], 7);
+    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->dq[0], 9);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->T[0], 7);
+    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->T[0], 9);
     if(tlen < 0) return tlen; else pos += tlen;
 
     return pos;
@@ -158,15 +158,15 @@ int fr3_state::_getEncodedSizeNoHash() const
 {
     int enc_size = 0;
     enc_size += __int64_t_encoded_array_size(NULL, 1);
-    enc_size += __double_encoded_array_size(NULL, 7);
-    enc_size += __double_encoded_array_size(NULL, 7);
-    enc_size += __double_encoded_array_size(NULL, 7);
+    enc_size += __double_encoded_array_size(NULL, 9);
+    enc_size += __double_encoded_array_size(NULL, 9);
+    enc_size += __double_encoded_array_size(NULL, 9);
     return enc_size;
 }
 
 uint64_t fr3_state::_computeHash(const __lcm_hash_ptr *)
 {
-    uint64_t hash = 0xe22883fb178c4740LL;
+    uint64_t hash = 0xe22887fb078c4742LL;
     return (hash<<1) + ((hash>>63)&1);
 }
 

@@ -18,7 +18,7 @@ class fr3_cmd
     public:
         int64_t    timestamp;
 
-        double     cmd[7];
+        double     cmd[9];
 
     public:
         /**
@@ -119,7 +119,7 @@ int fr3_cmd::_encodeNoHash(void *buf, int offset, int maxlen) const
     tlen = __int64_t_encode_array(buf, offset + pos, maxlen - pos, &this->timestamp, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->cmd[0], 7);
+    tlen = __double_encode_array(buf, offset + pos, maxlen - pos, &this->cmd[0], 9);
     if(tlen < 0) return tlen; else pos += tlen;
 
     return pos;
@@ -132,7 +132,7 @@ int fr3_cmd::_decodeNoHash(const void *buf, int offset, int maxlen)
     tlen = __int64_t_decode_array(buf, offset + pos, maxlen - pos, &this->timestamp, 1);
     if(tlen < 0) return tlen; else pos += tlen;
 
-    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->cmd[0], 7);
+    tlen = __double_decode_array(buf, offset + pos, maxlen - pos, &this->cmd[0], 9);
     if(tlen < 0) return tlen; else pos += tlen;
 
     return pos;
@@ -142,13 +142,13 @@ int fr3_cmd::_getEncodedSizeNoHash() const
 {
     int enc_size = 0;
     enc_size += __int64_t_encoded_array_size(NULL, 1);
-    enc_size += __double_encoded_array_size(NULL, 7);
+    enc_size += __double_encoded_array_size(NULL, 9);
     return enc_size;
 }
 
 uint64_t fr3_cmd::_computeHash(const __lcm_hash_ptr *)
 {
-    uint64_t hash = 0xdf592aaf6851ba0bLL;
+    uint64_t hash = 0xdf592aaf6851ba0dLL;
     return (hash<<1) + ((hash>>63)&1);
 }
 
