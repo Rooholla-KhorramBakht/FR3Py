@@ -3,6 +3,6 @@ package fr3_commands;
 struct fr3_cmd
 {
     int64_t  timestamp;
-    double   cmd[7]; 
+    double   cmd[9]; 
 }
 

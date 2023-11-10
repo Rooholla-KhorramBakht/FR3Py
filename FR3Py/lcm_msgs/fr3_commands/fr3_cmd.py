@@ -14,11 +14,11 @@ class fr3_cmd(object):
 
     __typenames__ = ["int64_t", "double"]
 
-    __dimensions__ = [None, [7]]
+    __dimensions__ = [None, [9]]
 
     def __init__(self):
         self.timestamp = 0
-        self.cmd = [ 0.0 for dim0 in range(7) ]
+        self.cmd = [ 0.0 for dim0 in range(9) ]
 
     def encode(self):
         buf = BytesIO()
@@ -28,7 +28,7 @@ class fr3_cmd(object):
 
     def _encode_one(self, buf):
         buf.write(struct.pack(">q", self.timestamp))
-        buf.write(struct.pack('>7d', *self.cmd[:7]))
+        buf.write(struct.pack('>9d', *self.cmd[:9]))
 
     def decode(data):
         if hasattr(data, 'read'):
@@ -43,13 +43,13 @@ class fr3_cmd(object):
     def _decode_one(buf):
         self = fr3_cmd()
         self.timestamp = struct.unpack(">q", buf.read(8))[0]
-        self.cmd = struct.unpack('>7d', buf.read(56))
+        self.cmd = struct.unpack('>9d', buf.read(72))
         return self
     _decode_one = staticmethod(_decode_one)
 
     def _get_hash_recursive(parents):
         if fr3_cmd in parents: return 0
-        tmphash = (0xdf592aaf6851ba0b) & 0xffffffffffffffff
+        tmphash = (0xdf592aaf6851ba0d) & 0xffffffffffffffff
         tmphash  = (((tmphash<<1)&0xffffffffffffffff) + (tmphash>>63)) & 0xffffffffffffffff
         return tmphash
     _get_hash_recursive = staticmethod(_get_hash_recursive)
