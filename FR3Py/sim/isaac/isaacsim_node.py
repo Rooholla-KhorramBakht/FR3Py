@@ -17,7 +17,7 @@ from FR3Py.sim.isaac.utils import AnnotatorManager
 
 import time
 
-from FR3Py.lcm_bridges import LCMBridgeServer
+from FR3Py.sim.lcm_bridges import LCMBridgeServer
 from FR3Py.lcm_msgs.fr3_commands import fr3_cmd
 from FR3Py.sim.utils import simulationManager
 from FR3Py.utils import NumpyMemMapDataPipe
@@ -113,11 +113,11 @@ while simulation_app.is_running():
         world.step(render=True)
         img = ann.getData("rgb:rgb")
         depth = ann.getData("rgb:distance_to_camera")
-        # if img.shape[0]:
-        #     cv2.imshow(f"rgb", img)
-        #     cv2.imshow(f"depth", depth)
-        #     rgb_data_pipe.write(img, match_length=False)
-        #     depth_data_pipe.write(depth, match_length=False)
+        if img.shape[0]:
+            # cv2.imshow(f"rgb", img)
+            # cv2.imshow(f"depth", depth)
+            rgb_data_pipe.write(img, match_length=False)
+            depth_data_pipe.write(depth, match_length=False)
         # cv2.waitKey(1)
     else:
         world.step(render=False)

@@ -158,7 +158,7 @@ class FR3(Articulation):
         Argument:
             action {np.ndarray} -- Joint torque command
         """
-        self.apply_action(ArticulationAction(joint_velocities=self.toIsaacOrder(cmd.cmd)))
+        self.apply_action(ArticulationAction(joint_velocities=self.toIsaacOrder(np.array(cmd.cmd))))
         return
 
     def step(self, cmd):

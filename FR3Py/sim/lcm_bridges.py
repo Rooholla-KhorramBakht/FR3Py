@@ -2,7 +2,8 @@ import select
 
 import lcm
 
-from B1Py.lcm_types.unitree_lowlevel import UnitreeLowCommand, UnitreeLowState
+from FR3Py.lcm_msgs.fr3_commands import fr3_cmd
+from FR3Py.lcm_msgs.fr3_states import fr3_state
 
 
 class LCMBridgeServer:
@@ -15,7 +16,7 @@ class LCMBridgeServer:
         self.robot_name = robot_name
         self.state_topic_name = f"{robot_name}_state"
         self.command_topic_name = f"{robot_name}_command"
-        self.commands = UnitreeLowCommand()
+        self.commands = fr3_cmd()
         # Threading Interface for handling LCM
         self.lc = lcm.LCM("udpm://239.255.76.67:7667?ttl=1")
         self.subscription = self.lc.subscribe(
@@ -53,7 +54,7 @@ class LCMBridgeServer:
         @param channel: (str) The name of the LCM channel
         @param data: (bytes) The LCM message data
         """
-        self.commands = UnitreeLowCommand.decode(data)
+        self.commands = fr3_cmd.decode(data)
 
     def close(self):
         """
@@ -77,7 +78,7 @@ class LCMBridgeClient:
         self.robot_name = robot_name
         self.state_topic_name = f"{robot_name}_state"
         self.command_topic_name = f"{robot_name}_command"
-        self.states = UnitreeLowState()
+        self.states = fr3_state()
         self.user_callback = user_callback  # Callback function to be executed when a new state is received
         # Threading Interface for handling LCM
         self.lc = lcm.LCM("udpm://239.255.76.67:7667?ttl=1")
@@ -116,7 +117,7 @@ class LCMBridgeClient:
         @param channel: (str) The name of the LCM channel
         @param data: (bytes) The LCM message data
         """
-        self.states = UnitreeLowState.decode(data)
+        self.states = fr3_state.decode(data)
         if self.user_callback is not None:
             self.user_callback(self.states)
 
