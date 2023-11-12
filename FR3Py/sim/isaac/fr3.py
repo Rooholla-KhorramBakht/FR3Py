@@ -14,6 +14,7 @@ from FR3Py.lcm_msgs.fr3_states import fr3_state
 
 
 class FR3(Articulation):
+    
     def __init__(
         self,
         prim_path: str,
@@ -21,6 +22,7 @@ class FR3(Articulation):
         physics_dt: Optional[float] = 1 / 200.0,
         position: Optional[np.ndarray] = None,
         orientation: Optional[np.ndarray] = None,
+        usd_path: Optional[str] = None,
     ) -> None:
         """
         [Summary]
@@ -33,10 +35,15 @@ class FR3(Articulation):
             physics_dt {float} -- physics downtime of the controller
             position {np.ndarray} -- position of the robot
             orientation {np.ndarray} -- orientation of the robot
+            usd_path {str} -- path to the usd file of the robot
         """
         self._prim_path = prim_path
+        self.usd_path = usd_path    
         prim = define_prim(self._prim_path, "Xform")
-        prim.GetReferences().AddReference(FR3Py.FR3_USD_PATH)
+        if self.usd_path is None:
+            prim.GetReferences().AddReference(FR3Py.FR3_USD_PATH)
+        else:
+            prim.GetReferences().AddReference(self.usd_path)
 
         super().__init__(
             prim_path=self._prim_path,
@@ -95,7 +102,7 @@ class FR3(Articulation):
     def toBulletOrder(self, x):
         return x[self.to_bullet_index, ...]
 
-    def setState(self, pos, quat, q) -> None:
+    def setState(self, pos, quat, q, q_dot = np.zeros((9,))) -> None:
         """[Summary]
 
         Set the kinematic state of the robot.
@@ -108,7 +115,7 @@ class FR3(Articulation):
         Raises:
             RuntimeError: When the DC Toolbox interface has not been configured.
         """
-        self.set_world_pose(position=pos, orientation=quat[[3, 0, 1, 2]])
+        # self.set_world_pose(position=pos, orientation=quat[[3, 0, 1, 2]])
         self.set_linear_velocity(np.zeros((3,)))
         self.set_angular_velocity(np.zeros((3,)))
 
@@ -116,16 +123,14 @@ class FR3(Articulation):
             positions=np.asarray(self.toIsaacOrder(q), dtype=np.float32)
         )
         self.set_joint_velocities(
-            velocities=np.asarray(self.toIsaacOrder(np.zeros((9,))), dtype=np.float32)
+            velocities=np.asarray(self.toIsaacOrder(q_dot), dtype=np.float32)
         )
         self.set_joint_efforts(np.zeros((9,)))
         return
 
     def initialize(self, physics_sim_view=None) -> None:
         """[summary]
-
         initialize dc interface, set up drive mode and initial robot state
-
         """
         super().initialize(physics_sim_view=physics_sim_view)
         self.get_articulation_controller().set_effort_modes("force")
@@ -133,7 +138,6 @@ class FR3(Articulation):
         self.setState(self.init_pos, self.init_quat, self.init_joint_pos)
 
     def readStates(self):
-
         # joint pos and vel from the DC interface
         joint_state = super().get_joints_state()
         joint_pos = self.toBulletOrder(joint_state.positions)

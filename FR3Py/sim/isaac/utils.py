@@ -1,6 +1,13 @@
 import omni.replicator.core as rep
 from pxr import UsdGeom
+import yaml
+from omni.isaac.core.utils.prims import define_prim, get_prim_at_path
 
+
+def load_config(file_path):
+    with open(file_path, 'r') as file:
+        config = yaml.safe_load(file)
+    return config
 
 class AnnotatorManager:
     def __init__(self, world):
@@ -19,20 +26,22 @@ class AnnotatorManager:
     def registerCamera(
         self, parent_prim, name, translation, orientation, resolution=(1024, 600)
     ):
-        self.cameras[name] = self.world.stage.DefinePrim(
-            parent_prim + "/" + name, "Camera"
-        )
-        self.camera_info[name] = {
-            "translation": translation,
-            "orientation": orientation,
-            "resolution": resolution,
-        }
-        UsdGeom.Xformable(self.cameras[name]).AddTranslateOp().Set(translation)
-        UsdGeom.Xformable(self.cameras[name]).AddRotateXYZOp().Set(orientation)
-        self.render_products[name] = rep.create.render_product(
-            str(self.cameras[name].GetPrimPath()), resolution
-        )
-        # return camera
+        prim = get_prim_at_path(parent_prim + "/" + name)
+        if (name not in self.camera_info.keys()) and (not prim.IsValid()):
+            self.camera_info[name] = {
+                "translation": translation,
+                "orientation": orientation,
+                "resolution": resolution,
+            }
+            self.cameras[name] = self.world.stage.DefinePrim(
+                parent_prim + "/" + name, "Camera"
+            )
+            
+            UsdGeom.Xformable(self.cameras[name]).AddTranslateOp().Set(translation)
+            UsdGeom.Xformable(self.cameras[name]).AddRotateXYZOp().Set(orientation)
+            self.render_products[name] = rep.create.render_product(
+                str(self.cameras[name].GetPrimPath()), resolution
+            )
 
     def registerAnnotator(self, type, camera_name):
         assert (
@@ -70,3 +79,9 @@ class AnnotatorManager:
             name in self.cameras.keys()
         ), "The requested camera is not registered. Please register the camera first."
         self.cameras[name].GetAttribute("clippingRange").Set((min, max))
+    # TODO: implement these functions
+    def getCameraIntrinsics(self, name):
+        return None
+    
+    def getCameraExtrinsics(self, name):
+        return None
