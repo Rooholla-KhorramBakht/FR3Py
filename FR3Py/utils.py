@@ -40,4 +40,3 @@ class NumpyMemMapDataPipe:
 
     def read(self):
         return self.shm.copy()
-

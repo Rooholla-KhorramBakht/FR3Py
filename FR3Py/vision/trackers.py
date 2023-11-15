@@ -1,6 +1,7 @@
-from pupil_apriltags import Detector
-import numpy as np
 import cv2
+import numpy as np
+from pupil_apriltags import Detector
+
 
 class ApriltagTracker:
     """
@@ -29,12 +30,14 @@ class ApriltagTracker:
             Undistort an input image using camera calibration parameters.
     """
 
-    def __init__(self,
-                 tag_size,
-                 intrinsic_matrix=None,
-                 distortion_coeffs=None,
-                 family='tag36h11',
-                 nthreads=4):
+    def __init__(
+        self,
+        tag_size,
+        intrinsic_matrix=None,
+        distortion_coeffs=None,
+        family="tag36h11",
+        nthreads=4,
+    ):
         """
         Initialize the ApriltagTracker.
 
@@ -50,10 +53,7 @@ class ApriltagTracker:
         self.tag_size = tag_size
         self.family = family
         self.nthreads = nthreads
-        self.detector = Detector(
-            families='tag36h11',
-            nthreads=nthreads
-        )
+        self.detector = Detector(families="tag36h11", nthreads=nthreads)
         self.detected_ids = []
 
     def process(self, image):
@@ -74,9 +74,12 @@ class ApriltagTracker:
             fy = self.intrinsic_matrix[1, 1]
             cx = self.intrinsic_matrix[0, 2]
             cy = self.intrinsic_matrix[1, 2]
-            self.detections = self.detector.detect(image, estimate_tag_pose=True,
-                                                   camera_params=[fx, fy, cx, cy],
-                                                   tag_size=self.tag_size)
+            self.detections = self.detector.detect(
+                image,
+                estimate_tag_pose=True,
+                camera_params=[fx, fy, cx, cy],
+                tag_size=self.tag_size,
+            )
         else:
             self.detections = self.detector.detect(image, estimate_tag_pose=True)
 
@@ -100,9 +103,9 @@ class ApriltagTracker:
                 R = info.pose_R
                 t = info.pose_t
                 T = np.vstack([np.hstack((R, t)), np.array([[0, 0, 0, 1]])])
-                return {'corners': corners, 'center': center, 'pose': T}
+                return {"corners": corners, "center": center, "pose": T}
             else:
-                return {'corners': corners, 'center': center}
+                return {"corners": corners, "center": center}
         else:
             return None
 
@@ -126,7 +129,7 @@ class ApriltagTracker:
             numpy.ndarray: The undistorted image.
         """
         # Undistort the image
-        undistorted_image = cv2.undistort(img,
-                                          self.intrinsic_matrix,
-                                          self.distortion_coeffs)
+        undistorted_image = cv2.undistort(
+            img, self.intrinsic_matrix, self.distortion_coeffs
+        )
         return undistorted_image

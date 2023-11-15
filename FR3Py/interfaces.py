@@ -2,17 +2,19 @@ import select
 import threading
 import time
 from time import sleep
+
+import lcm
 import numpy as np
 import pinocchio as pin
-from FR3Py.lcm_msgs.fr3_states import fr3_state
+
 from FR3Py.lcm_msgs.fr3_commands import fr3_cmd
-import lcm
+from FR3Py.lcm_msgs.fr3_states import fr3_state
 
 
 class FR3Real:
     """
     Class for communication with the Franka Emika FR3 robot.
-    It uses LCM to send joint velocity or joint torque commands 
+    It uses LCM to send joint velocity or joint torque commands
     to the robot and receive joint states (joint angle, velocity, and torque).
     """
 
@@ -24,7 +26,7 @@ class FR3Real:
         """
         Initialize an instance of the class.
 
-        @param robot_name: (str) A unique id used to generate the LCM 
+        @param robot_name: (str) A unique id used to generate the LCM
         message topic names of the robot. Defaults to "franka".
         @param interface_type: (str) Determines whether to send joint velocities
         or joint torques to the robot as command. Defaults to "joint_velocity".
@@ -79,8 +81,8 @@ class FR3Real:
         """
         Get the current joint angle, velocity, and torque of the robot.
 
-        @return: (dict or None) The joint state {'q': (numpy.ndarray, shape=(n,)), 
-        'dq': (numpy.ndarray, shape=(n,)), 'T': (numpy.ndarray, shape=(n,))} 
+        @return: (dict or None) The joint state {'q': (numpy.ndarray, shape=(n,)),
+        'dq': (numpy.ndarray, shape=(n,)), 'T': (numpy.ndarray, shape=(n,))}
         if the latest update was received less than 0.2 seconds ago;
         otherwise, return None.
         """

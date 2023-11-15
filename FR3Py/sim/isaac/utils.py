@@ -1,13 +1,14 @@
 import omni.replicator.core as rep
-from pxr import UsdGeom
 import yaml
 from omni.isaac.core.utils.prims import define_prim, get_prim_at_path
+from pxr import UsdGeom
 
 
 def load_config(file_path):
-    with open(file_path, 'r') as file:
+    with open(file_path, "r") as file:
         config = yaml.safe_load(file)
     return config
+
 
 class AnnotatorManager:
     def __init__(self, world):
@@ -36,7 +37,7 @@ class AnnotatorManager:
             self.cameras[name] = self.world.stage.DefinePrim(
                 parent_prim + "/" + name, "Camera"
             )
-            
+
             UsdGeom.Xformable(self.cameras[name]).AddTranslateOp().Set(translation)
             UsdGeom.Xformable(self.cameras[name]).AddRotateXYZOp().Set(orientation)
             self.render_products[name] = rep.create.render_product(
@@ -79,9 +80,10 @@ class AnnotatorManager:
             name in self.cameras.keys()
         ), "The requested camera is not registered. Please register the camera first."
         self.cameras[name].GetAttribute("clippingRange").Set((min, max))
+
     # TODO: implement these functions
     def getCameraIntrinsics(self, name):
         return None
-    
+
     def getCameraExtrinsics(self, name):
         return None
