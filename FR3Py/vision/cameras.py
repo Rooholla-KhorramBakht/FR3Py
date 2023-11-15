@@ -49,7 +49,6 @@ class RealSenseCamera:
         emitter_enabled=True,
         align_to_color=False,
     ):
-
         self.callback_fn = callback_fn
         self.camera_serial_no = camera_serial_no
         self.VGA = VGA
