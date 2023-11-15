@@ -9,6 +9,7 @@ except ImportError:
     from io import BytesIO
 import struct
 
+
 class fr3_state(object):
     __slots__ = ["timestamp", "q", "dq", "T"]
 
@@ -18,9 +19,9 @@ class fr3_state(object):
 
     def __init__(self):
         self.timestamp = 0
-        self.q = [ 0.0 for dim0 in range(9) ]
-        self.dq = [ 0.0 for dim0 in range(9) ]
-        self.T = [ 0.0 for dim0 in range(9) ]
+        self.q = [0.0 for dim0 in range(9)]
+        self.dq = [0.0 for dim0 in range(9)]
+        self.T = [0.0 for dim0 in range(9)]
 
     def encode(self):
         buf = BytesIO()
@@ -30,44 +31,52 @@ class fr3_state(object):
 
     def _encode_one(self, buf):
         buf.write(struct.pack(">q", self.timestamp))
-        buf.write(struct.pack('>9d', *self.q[:9]))
-        buf.write(struct.pack('>9d', *self.dq[:9]))
-        buf.write(struct.pack('>9d', *self.T[:9]))
+        buf.write(struct.pack(">9d", *self.q[:9]))
+        buf.write(struct.pack(">9d", *self.dq[:9]))
+        buf.write(struct.pack(">9d", *self.T[:9]))
 
     def decode(data):
-        if hasattr(data, 'read'):
+        if hasattr(data, "read"):
             buf = data
         else:
             buf = BytesIO(data)
         if buf.read(8) != fr3_state._get_packed_fingerprint():
             raise ValueError("Decode error")
         return fr3_state._decode_one(buf)
+
     decode = staticmethod(decode)
 
     def _decode_one(buf):
         self = fr3_state()
         self.timestamp = struct.unpack(">q", buf.read(8))[0]
-        self.q = struct.unpack('>9d', buf.read(72))
-        self.dq = struct.unpack('>9d', buf.read(72))
-        self.T = struct.unpack('>9d', buf.read(72))
+        self.q = struct.unpack(">9d", buf.read(72))
+        self.dq = struct.unpack(">9d", buf.read(72))
+        self.T = struct.unpack(">9d", buf.read(72))
         return self
+
     _decode_one = staticmethod(_decode_one)
 
     def _get_hash_recursive(parents):
-        if fr3_state in parents: return 0
-        tmphash = (0xe22887fb078c4742) & 0xffffffffffffffff
-        tmphash  = (((tmphash<<1)&0xffffffffffffffff) + (tmphash>>63)) & 0xffffffffffffffff
+        if fr3_state in parents:
+            return 0
+        tmphash = (0xE22887FB078C4742) & 0xFFFFFFFFFFFFFFFF
+        tmphash = (
+            ((tmphash << 1) & 0xFFFFFFFFFFFFFFFF) + (tmphash >> 63)
+        ) & 0xFFFFFFFFFFFFFFFF
         return tmphash
+
     _get_hash_recursive = staticmethod(_get_hash_recursive)
     _packed_fingerprint = None
 
     def _get_packed_fingerprint():
         if fr3_state._packed_fingerprint is None:
-            fr3_state._packed_fingerprint = struct.pack(">Q", fr3_state._get_hash_recursive([]))
+            fr3_state._packed_fingerprint = struct.pack(
+                ">Q", fr3_state._get_hash_recursive([])
+            )
         return fr3_state._packed_fingerprint
+
     _get_packed_fingerprint = staticmethod(_get_packed_fingerprint)
 
     def get_hash(self):
         """Get the LCM hash of the struct"""
         return struct.unpack(">Q", fr3_state._get_packed_fingerprint())[0]
-

@@ -1,8 +1,10 @@
 from typing import Optional
+
 import numpy as np
 import pybullet as p
 import pybullet_data
 from gymnasium import Env, spaces
+
 from FR3Py import getDataPath
 from FR3Py.controllers.utils import RobotModel
 
@@ -12,6 +14,7 @@ class FR3Sim(Env):
     A simulation class for the Franka Research 3 robot. The class is a subclass of gymnasium environment.
     The class allows to simulate the robot in two control modes in the joint space: velocity and torque.
     """
+
     metadata = {
         "render_modes": ["human", "rgb_array"],
     }
@@ -25,7 +28,7 @@ class FR3Sim(Env):
     ):
         """
         Class constructor that sets the control mode, the client and initializes the robot and its environment.
-        
+
         @param mode: (str) Control mode for the robot, should be either "velocity" or "torque".
         @param render_mode: (str, optional) Mode for rendering. If set to "human", uses GUI for rendering. Default is None.
         @param record_path: (str, optional) Path to save recording. Default is None.

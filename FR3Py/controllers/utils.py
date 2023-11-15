@@ -1,10 +1,12 @@
-from FR3Py import getDataPath
-import numpy as np
+import copy
 import os
+
+import numpy as np
 import pinocchio as pin
 from pinocchio.robot_wrapper import RobotWrapper
-import copy
 from scipy.spatial.transform import Rotation
+
+from FR3Py import getDataPath
 
 
 class RobotModel:

@@ -5,16 +5,16 @@ import numpy as np
 import pypose as pp
 from omni.isaac.core.articulations import Articulation
 from omni.isaac.core.utils.prims import define_prim
-from omni.isaac.sensor import ContactSensor, IMUSensor
 from omni.isaac.core.utils.types import ArticulationAction
+from omni.isaac.sensor import ContactSensor, IMUSensor
 
 import FR3Py
+
 # from FR3Py.lcm_types.unitree_lowlevel import UnitreeLowState
 from FR3Py.lcm_msgs.fr3_states import fr3_state
 
 
 class FR3(Articulation):
-    
     def __init__(
         self,
         prim_path: str,
@@ -38,7 +38,7 @@ class FR3(Articulation):
             usd_path {str} -- path to the usd file of the robot
         """
         self._prim_path = prim_path
-        self.usd_path = usd_path    
+        self.usd_path = usd_path
         prim = define_prim(self._prim_path, "Xform")
         if self.usd_path is None:
             prim.GetReferences().AddReference(FR3Py.FR3_USD_PATH)
@@ -52,25 +52,29 @@ class FR3(Articulation):
             orientation=orientation,
         )
 
-        self.bullet_joint_order = ['fr3_joint1', 
-                                  'fr3_joint2', 
-                                  'fr3_joint3', 
-                                  'fr3_joint4', 
-                                  'fr3_joint5', 
-                                  'fr3_joint6', 
-                                  'fr3_joint7', 
-                                  'fr3_finger_joint1', 
-                                  'fr3_finger_joint2']
-        
-        self.isaac_joint_order = ['fr3_joint1', 
-                                  'fr3_joint2', 
-                                  'fr3_joint3', 
-                                  'fr3_joint4', 
-                                  'fr3_joint5', 
-                                  'fr3_joint6', 
-                                  'fr3_joint7', 
-                                  'fr3_finger_joint1', 
-                                  'fr3_finger_joint2']
+        self.bullet_joint_order = [
+            "fr3_joint1",
+            "fr3_joint2",
+            "fr3_joint3",
+            "fr3_joint4",
+            "fr3_joint5",
+            "fr3_joint6",
+            "fr3_joint7",
+            "fr3_finger_joint1",
+            "fr3_finger_joint2",
+        ]
+
+        self.isaac_joint_order = [
+            "fr3_joint1",
+            "fr3_joint2",
+            "fr3_joint3",
+            "fr3_joint4",
+            "fr3_joint5",
+            "fr3_joint6",
+            "fr3_joint7",
+            "fr3_finger_joint1",
+            "fr3_finger_joint2",
+        ]
 
         self.isaac_name_2_index = {s: i for i, s in enumerate(self.isaac_joint_order)}
         self.bullet_name_2_index = {s: i for i, s in enumerate(self.bullet_joint_order)}
@@ -85,15 +89,19 @@ class FR3(Articulation):
         self.state = fr3_state()
         self.init_pos = np.array([0.0, 0.0, 0.6])
         self.init_quat = np.array([0.0, 0.0, 0.0, 1.0])
-        self.init_joint_pos = np.array([0.0,
-                                        -0.785398163,
-                                        0.0,
-                                        -2.35619449,
-                                        0.0,
-                                        1.57079632679,
-                                        0.785398163397,
-                                        0.001,
-                                        0.001])
+        self.init_joint_pos = np.array(
+            [
+                0.0,
+                -0.785398163,
+                0.0,
+                -2.35619449,
+                0.0,
+                1.57079632679,
+                0.785398163397,
+                0.001,
+                0.001,
+            ]
+        )
         return
 
     def toIsaacOrder(self, x):
@@ -102,7 +110,7 @@ class FR3(Articulation):
     def toBulletOrder(self, x):
         return x[self.to_bullet_index, ...]
 
-    def setState(self, pos, quat, q, q_dot = np.zeros((9,))) -> None:
+    def setState(self, pos, quat, q, q_dot=np.zeros((9,))) -> None:
         """[Summary]
 
         Set the kinematic state of the robot.
@@ -162,7 +170,9 @@ class FR3(Articulation):
         Argument:
             action {np.ndarray} -- Joint torque command
         """
-        self.apply_action(ArticulationAction(joint_velocities=self.toIsaacOrder(np.array(cmd.cmd))))
+        self.apply_action(
+            ArticulationAction(joint_velocities=self.toIsaacOrder(np.array(cmd.cmd)))
+        )
         return
 
     def step(self, cmd):

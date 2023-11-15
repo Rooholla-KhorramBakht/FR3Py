@@ -12,13 +12,13 @@ class CalibrationData:
     quat: np.ndarray
     rot_mat: np.ndarray
     trans_mat: np.array
-    pose:    np.ndarray
+    pose: np.ndarray
     parent_frame: str
     child_frame: str
 
 
 def moveitHandEyeLaunchResultParser(filename):
-    """Load and parse the calibration result from the Moveit library and returns 
+    """Load and parse the calibration result from the Moveit library and returns
     the contained pose in various forms"""
     tree = ET.parse(filename)
     root = tree.getroot()
