@@ -1,0 +1,52 @@
+environment:
+  simulation_dt: 0.01
+  rendering_dt: 0.02
+  mode: "velocity_control"
+  prim_path: "/World/Env"
+  buildin: true
+  usd_path: "/Isaac/Environments/Grid/default_environment.usd"
+  synchronous_mode: true # if true, the simulator will wait for the control commands from the LCM channel for 0.1 seconds
+
+# tables:
+#   - position: [0.0, 0.0, 1.04]
+#     orientation: [0.0, 0.0, 0.0]
+#     buildin: true
+#     usd_path: "/Isaac/Props/Mounts/textured_table.usd"
+#     prim_path: "/World/Env/Table"
+
+robots:
+  - prim_path: "/World/Env/FR3"
+    usd_path: /home/mocap/manipulation/rooholla/FR3Py/FR3Py/sim/assets/USDs/fr3.usda
+    name: "fr3"
+    usd_file: "assets/fr3/fr3.usd"
+    position: [0.0, 0.0, 1.04]
+    orientation: [0.0, 0.0, 0.0, 1.0]
+
+cameras:
+  - prim_path: "/World/Env/FR3/fr3_hand/rgb_camera"
+    name: "ef_camera"
+    type: "distance_to_camera"
+    resolution: [1280, 720]
+    interstice_parameters:
+      K: [1000, 1000, 500, 500]
+      D: [0.1, 0.2, 0.1, 0.0]
+    pose: [0.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+    # Note: cameras of the same name and prim path will not be registered and only the requested annotator will be activated
+  - prim_path: "/World/Env/FR3/fr3_hand/rgb_camera"
+    name: "ef_camera"
+    type: "rgb"
+    resolution: [1280, 720]
+    interstice_parameters:
+      K: [1000, 1000, 500, 500]
+      D: [0.1, 0.2, 0.1, 0.0]
+    pose: [0.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+  - prim_path: "/World/Env/perspective"
+    name: "perspective"
+    type: "rgb"
+    resolution: [1280, 720]
+    interstice_parameters:
+      K: [1000, 1000, 500, 500]
+      D: [0.1, 0.2, 0.1, 0.0]
+    pose: [0.0, 0.0, 0.0, 0.0, 0.0, 1.0]
+
+  

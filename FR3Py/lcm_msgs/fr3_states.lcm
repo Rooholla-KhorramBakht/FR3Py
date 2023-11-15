@@ -3,7 +3,7 @@ package fr3_states;
 struct fr3_state
 {
     int64_t  timestamp;
-    double   q[7];
-    double   dq[7]; 
-    double   T[7]; 
+    double   q[9];
+    double   dq[9]; 
+    double   T[9]; 
 }

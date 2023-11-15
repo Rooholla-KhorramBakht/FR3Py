@@ -130,3 +130,7 @@ dmypy.json
 
 # MacOS
 .DS_Store
+
+#IDE 
+.vscode
+examples/dataset

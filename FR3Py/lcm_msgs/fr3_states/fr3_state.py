@@ -14,13 +14,13 @@ class fr3_state(object):
 
     __typenames__ = ["int64_t", "double", "double", "double"]
 
-    __dimensions__ = [None, [7], [7], [7]]
+    __dimensions__ = [None, [9], [9], [9]]
 
     def __init__(self):
         self.timestamp = 0
-        self.q = [ 0.0 for dim0 in range(7) ]
-        self.dq = [ 0.0 for dim0 in range(7) ]
-        self.T = [ 0.0 for dim0 in range(7) ]
+        self.q = [ 0.0 for dim0 in range(9) ]
+        self.dq = [ 0.0 for dim0 in range(9) ]
+        self.T = [ 0.0 for dim0 in range(9) ]
 
     def encode(self):
         buf = BytesIO()
@@ -30,9 +30,9 @@ class fr3_state(object):
 
     def _encode_one(self, buf):
         buf.write(struct.pack(">q", self.timestamp))
-        buf.write(struct.pack('>7d', *self.q[:7]))
-        buf.write(struct.pack('>7d', *self.dq[:7]))
-        buf.write(struct.pack('>7d', *self.T[:7]))
+        buf.write(struct.pack('>9d', *self.q[:9]))
+        buf.write(struct.pack('>9d', *self.dq[:9]))
+        buf.write(struct.pack('>9d', *self.T[:9]))
 
     def decode(data):
         if hasattr(data, 'read'):
@@ -47,15 +47,15 @@ class fr3_state(object):
     def _decode_one(buf):
         self = fr3_state()
         self.timestamp = struct.unpack(">q", buf.read(8))[0]
-        self.q = struct.unpack('>7d', buf.read(56))
-        self.dq = struct.unpack('>7d', buf.read(56))
-        self.T = struct.unpack('>7d', buf.read(56))
+        self.q = struct.unpack('>9d', buf.read(72))
+        self.dq = struct.unpack('>9d', buf.read(72))
+        self.T = struct.unpack('>9d', buf.read(72))
         return self
     _decode_one = staticmethod(_decode_one)
 
     def _get_hash_recursive(parents):
         if fr3_state in parents: return 0
-        tmphash = (0xe22883fb178c4740) & 0xffffffffffffffff
+        tmphash = (0xe22887fb078c4742) & 0xffffffffffffffff
         tmphash  = (((tmphash<<1)&0xffffffffffffffff) + (tmphash>>63)) & 0xffffffffffffffff
         return tmphash
     _get_hash_recursive = staticmethod(_get_hash_recursive)
