@@ -1,8 +1,8 @@
-include FR3Py/interface_configs/*.yaml
-include FR3Py/robots/meshes/collision/*.stl
-include FR3Py/robots/meshes/visual/*.mtl
-include FR3Py/robots/meshes/visual/*.png
-include FR3Py/robots/meshes/visual/*.obj
-include FR3Py/robots/*.urdf
-include FR3Py/sim/assets/USDs*.usda
-include FR3Py/sim/assets/USDs/materials*.png
+include FR3Py/interface_configs/*.yaml   FR3Py/assets
+include FR3Py/assets/urdf/meshes/collision/*.stl
+include FR3Py/assets/urdf/meshes/visual/*.mtl
+include FR3Py/assets/urdf/meshes/visual/*.png
+include FR3Py/assets/urdf/meshes/visual/*.obj
+include FR3Py/assets/urdf/*.urdf
+include FR3Py/assets/usd/*.usda
+include FR3Py/assets/usd/materials/*.png

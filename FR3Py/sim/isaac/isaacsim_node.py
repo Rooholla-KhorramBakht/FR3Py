@@ -21,7 +21,7 @@ from FR3Py.sim.isaac.fr3 import FR3
 from FR3Py.sim.isaac.utils import AnnotatorManager, load_config
 from FR3Py.sim.lcm_bridges import LCMBridgeServer
 from FR3Py.sim.utils import simulationManager
-from FR3Py.utils import NumpyMemMapDataPipe
+from FR3Py.robot.model import NumpyMemMapDataPipe
 
 # load the simulation configs
 cfg = load_config(

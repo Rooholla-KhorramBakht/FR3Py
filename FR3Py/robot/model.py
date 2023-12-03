@@ -1,18 +1,17 @@
+import sys
+from dataclasses import dataclass
+import numpy as np
 import copy
-import os
-
 import numpy as np
 import pinocchio as pin
 from pinocchio.robot_wrapper import RobotWrapper
 from scipy.spatial.transform import Rotation
-
 from FR3Py import getDataPath
 
-
-class RobotModel:
+class PinocchioModel:
     def __init__(self):
         package_directory = getDataPath()
-        robot_URDF = package_directory + "/robots/fr3.urdf"
+        robot_URDF = package_directory + "/assets/urdf/fr3.urdf"
         self.robot = RobotWrapper.BuildFromURDF(robot_URDF, package_directory)
         # get fr3 frame ids
         self.FR3_LINK3_FRAME_ID = 8
@@ -205,3 +204,4 @@ class RobotModel:
             "P_EE": copy.deepcopy(self.robot.data.oMf[self.EE_FRAME_ID].translation),
         }
         return robot_states
+
