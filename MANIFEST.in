@@ -4,3 +4,5 @@ include FR3Py/robots/meshes/visual/*.mtl
 include FR3Py/robots/meshes/visual/*.png
 include FR3Py/robots/meshes/visual/*.obj
 include FR3Py/robots/*.urdf
+include FR3Py/sim/assets/USDs*.usda
+include FR3Py/sim/assets/USDs/materials*.png
