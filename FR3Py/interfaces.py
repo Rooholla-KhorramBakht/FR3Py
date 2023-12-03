@@ -77,7 +77,7 @@ class FR3Real:
         if self.user_callback is not None:
             self.user_callback(self.joint_state)
 
-    def get_state(self):
+    def getStates(self):
         """
         Get the current joint angle, velocity, and torque of the robot.
 
@@ -92,14 +92,14 @@ class FR3Real:
         else:
             return self.joint_state
 
-    def send_joint_command(self, cmd):
+    def sendCommands(self, cmd):
         """
         Send a joint command to the robot.
 
-        @param cmd: (numpy.ndarray, shape=(n,)) The joint command to send
+        @param cmd: (numpy.ndarray, shape=(9,)) The joint command to send
         """
         self.command_msg.timestamp = int(self.trigger_timestamp * 1000000)
-        self.command_msg.cmd = cmd.tolist()
+        self.command_msg.cmd = cmd[0:7].tolist()
         self.lc.publish(self.command_topic_name, self.command_msg.encode())
         self.cmd_log = cmd
 
