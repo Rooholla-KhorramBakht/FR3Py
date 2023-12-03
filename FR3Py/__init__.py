@@ -13,36 +13,31 @@ from FR3Py.lcm_msgs.fr3_states import fr3_state
 
 FR3_USD_PATH = os.path.join(os.path.dirname(__file__), "robots/USDs/fr3.usda")
 
-
 def getDataPath():
     resdir = os.path.join(os.path.dirname(__file__))
     return resdir
 
-class FR3:
+class FR3Real:
     """
     Class for communication with the Franka Emika FR3 robot.
     It uses LCM to send joint velocity or joint torque commands
     to the robot and receive joint states (joint angle, velocity, and torque).
     """
 
-    def __init__(
-        self,
-        robot_name="franka",
-        interface_type="joint_velocity",
-    ):
+    def __init__(self, robot_id= "franka"):
         """
         Initialize an instance of the class.
 
-        @param robot_name: (str) A unique id used to generate the LCM
+        @param robot_id: (str) A unique ID used to generate the LCM
         message topic names of the robot. Defaults to "franka".
         @param interface_type: (str) Determines whether to send joint velocities
         or joint torques to the robot as command. Defaults to "joint_velocity".
         """
         self.state = None
         self.trigger_timestamp = 0
-        self.robot_name = robot_name
-        self.state_topic_name = f"{robot_name}_state"
-        self.command_topic_name = f"{robot_name}_command"
+        self.robot_id = robot_id
+        self.state_topic_name = f"{robot_id}_state"
+        self.command_topic_name = f"{robot_id}_command"
         self.states_msg = fr3_state()
         self.command_msg = fr3_cmd()
         self.user_callback = None
@@ -101,7 +96,9 @@ class FR3:
 
     def sendCommands(self, cmd):
         """
-        Send a joint command to the robot.
+        Send a joint command to the robot. If the C++ driver is started with 
+        joint_velocity interface, the command is joint velocities; otherwise,
+        the command is joint torques.
 
         @param cmd: (numpy.ndarray, shape=(9,)) The joint command to send
         """
