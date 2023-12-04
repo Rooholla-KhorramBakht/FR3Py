@@ -1,14 +1,6 @@
 import omni.replicator.core as rep
-import yaml
 from omni.isaac.core.utils.prims import define_prim, get_prim_at_path
 from pxr import UsdGeom
-
-
-def load_config(file_path):
-    with open(file_path, "r") as file:
-        config = yaml.safe_load(file)
-    return config
-
 
 class AnnotatorManager:
     def __init__(self, world):

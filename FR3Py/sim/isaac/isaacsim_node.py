@@ -18,8 +18,8 @@ from pxr import UsdGeom
 
 from FR3Py.lcm_msgs.fr3_commands import fr3_cmd
 from FR3Py.sim.isaac.fr3 import FR3
-from FR3Py.sim.isaac.utils import AnnotatorManager, load_config
-from FR3Py.sim.utils import LCMBridgeServer, simulationManager, NumpyMemMapDataPipe
+from FR3Py.sim.isaac.utils import AnnotatorManager
+from FR3Py.sim.utils import LCMBridgeServer, simulationManager, NumpyMemMapDataPipe, load_config
 import FR3Py
 
 # load the simulation configs

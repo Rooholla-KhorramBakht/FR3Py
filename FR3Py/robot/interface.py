@@ -8,7 +8,7 @@ import numpy as np
 from FR3Py.lcm_msgs.fr3_commands import fr3_cmd
 from FR3Py.lcm_msgs.fr3_states import fr3_state
     
-class FR3RobotInterface:
+class FR3Real:
     """
     Class for communication with the Franka Emika FR3 robot.
     It uses LCM to send joint velocity or joint torque commands

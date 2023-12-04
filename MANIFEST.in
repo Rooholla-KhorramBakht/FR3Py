@@ -6,4 +6,4 @@ include FR3Py/assets/urdf/meshes/visual/*.obj
 include FR3Py/assets/urdf/*.urdf
 include FR3Py/assets/usd/*.usda
 include FR3Py/assets/usd/materials/*.png
-inlcude FR3Py/sim/isaac/sim_config.yaml
+include FR3Py/sim/isaac/*.yaml
