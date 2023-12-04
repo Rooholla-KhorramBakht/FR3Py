@@ -62,9 +62,9 @@ class FR3RobotInterface:
         """
         msg = fr3_state.decode(data)
         self.trigger_timestamp = np.array(msg.timestamp) / 1000000
-        q = np.hstack([msg.q, np.zeros((2))])
-        dq = np.hstack([msg.dq, np.zeros((2))])
-        T = np.hstack([msg.T, np.zeros((2))])
+        q = np.hstack([msg.q])
+        dq = np.hstack([msg.dq])
+        T = np.hstack([msg.T])
         self.joint_state = {"q": q, "dq": dq, "T": T}
         # Call an arbitrary user callback
         if self.user_callback is not None:
@@ -94,7 +94,7 @@ class FR3RobotInterface:
         @param cmd: (numpy.ndarray, shape=(9,)) The joint command to send
         """
         self.command_msg.timestamp = int(self.trigger_timestamp * 1000000)
-        self.command_msg.cmd = cmd[0:7].tolist()
+        self.command_msg.cmd = cmd.tolist()
         self.lc.publish(self.command_topic_name, self.command_msg.encode())
         self.cmd_log = cmd
 
