@@ -44,4 +44,25 @@ and use it to run the `unicast_config.py` file in the `tools` directory of this 
 ```bash
 sudo python3 tools/unicast_config.py <interface_name> # e.g. eth0
 ```
+## Simulation
+### Isaac Sim 
+We provide a simple simulation environment based on the Isaac Sim. The Isaacsim simulation only implements the joint velocity interface and follows the exact interfacing API as the one used for communicating with the real robot. To use the simulator, create a link to the builtin Python interpreter provided by Isaac Sim:
+
+```bash
+cd FR3Py
+ln -s ${ISAACSIM_PATH} _isaac_sim
+```
+where `ISAACSIM_PATH` points to the installation path of the simulator. Then install FR3Py for the Python interpreter provided by Isaac Sim:
+
+```bash
+./fr3py.sh -i
+```
+
+After installation, we can run the simulation node simply by running the `fr3py.sh` with the `--sim` option:
+
+```bash
+./fr3py.sh --sim
+```
+
+**Note:** The simulation scene and configuration can be changed through the modification of the `FR3Py/sim/isaac/sim_config.yaml` file. Note that after modification, the package must be installed again through `./fr3py.sh -i`. 
 

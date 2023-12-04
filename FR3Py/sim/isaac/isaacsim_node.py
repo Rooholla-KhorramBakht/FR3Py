@@ -19,13 +19,12 @@ from pxr import UsdGeom
 from FR3Py.lcm_msgs.fr3_commands import fr3_cmd
 from FR3Py.sim.isaac.fr3 import FR3
 from FR3Py.sim.isaac.utils import AnnotatorManager, load_config
-from FR3Py.sim.lcm_bridges import LCMBridgeServer
-from FR3Py.sim.utils import simulationManager
-from FR3Py.robot.model import NumpyMemMapDataPipe
+from FR3Py.sim.utils import LCMBridgeServer, simulationManager, NumpyMemMapDataPipe
+import FR3Py
 
 # load the simulation configs
 cfg = load_config(
-    "/home/mocap/manipulation/rooholla/FR3Py/FR3Py/sim/isaac/sim_config.yaml"
+    FR3Py.FR3_ISAACSIM_CFG_PATH
 )
 robots = cfg["robots"]
 cameras = cfg["cameras"]
@@ -84,7 +83,7 @@ if "tables" in cfg.keys():
 fr3 = world.scene.add(
     FR3(
         prim_path=robots[0]["prim_path"],
-        usd_path=robots[0]["usd_path"],
+        usd_path=(robots[0]["usd_path"] if robots[0]["usd_path"] !='' else None),
         name=robots[0]["name"],
         position=np.array(robots[0]["position"]),
         physics_dt=cfg["environment"]["simulation_dt"],

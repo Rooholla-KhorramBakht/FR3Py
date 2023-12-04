@@ -134,7 +134,8 @@ dmypy.json
 #IDE 
 .vscode
 examples/dataset
-
+# FR3Py
+_isaac_sim
 FR3Py/history
 examples/history
 FR3Py/sim/history
