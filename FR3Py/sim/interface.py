@@ -5,6 +5,7 @@ from FR3Py.sim.utils import NumpyMemMapDataPipe
 import numpy as np
 from FR3Py.sim.utils import load_config
 from FR3Py import FR3_ISAACSIM_CFG_PATH
+import time
 
 class FR3IsaacSim:
     """
@@ -82,3 +83,4 @@ class FR3IsaacSim:
         for i in range(100):
             time.sleep(0.01)
             self.sendCommands(np.zeros(9))
+            state=self.getStates()
