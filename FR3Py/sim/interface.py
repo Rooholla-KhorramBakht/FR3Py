@@ -21,14 +21,15 @@ class FR3IsaacSim:
         self.cfg = load_config(FR3_ISAACSIM_CFG_PATH)
         self.camera_pipes = {}
         for camera in self.cfg['cameras']:
-            if camera['type'] == 'rgb':
-                shape = (camera['resolution'][1], camera['resolution'][0], 4)
-            else:
-                shape = (camera['resolution'][1], camera['resolution'][0])
-            
-            self.camera_pipes[camera['name']+'_'+camera['type']] = \
-            NumpyMemMapDataPipe(camera['name']+'_'+camera['type'], force = False, shape= shape)
-            print(camera['name']+'_'+camera['type'])
+            for type in camera['type']:
+                if type == 'rgb':
+                    shape = (camera['resolution'][1], camera['resolution'][0], 4)
+                else:
+                    shape = (camera['resolution'][1], camera['resolution'][0])
+                
+                self.camera_pipes[camera['name']+'_'+type] = \
+                NumpyMemMapDataPipe(camera['name']+'_'+type, force = False, shape= shape)
+                print(camera['name']+'_'+type)
 
     def LCMThreadFunc(self):
         """
