@@ -25,28 +25,11 @@ robots:
 cameras:
   - prim_path: "/World/Env/FR3/fr3_hand/rgb_camera"
     name: "ef_camera"
-    type: "distance_to_camera"
+    type: ["distance_to_camera", "rgb"]
     resolution: [1280, 720]
     interstice_parameters:
       K: [1000, 1000, 500, 500]
       D: [0.1, 0.2, 0.1, 0.0]
-    pose: [0.0, 0.0, 0.0, 0.0, 0.0, 1.0]
-    # Note: cameras of the same name and prim path will not be registered and only the requested annotator will be activated
-  - prim_path: "/World/Env/FR3/fr3_hand/rgb_camera"
-    name: "ef_camera"
-    type: "rgb"
-    resolution: [1280, 720]
-    interstice_parameters:
-      K: [1000, 1000, 500, 500]
-      D: [0.1, 0.2, 0.1, 0.0]
-    pose: [0.0, 0.0, 0.0, 0.0, 0.0, 1.0]
-  - prim_path: "/World/Env/perspective"
-    name: "perspective"
-    type: "rgb"
-    resolution: [1280, 720]
-    interstice_parameters:
-      K: [1000, 1000, 500, 500]
-      D: [0.1, 0.2, 0.1, 0.0]
-    pose: [0.0, 0.0, 0.0, 0.0, 0.0, 1.0]
-
+    translation: [0.0, 0.0, 0.0] # x, y, z
+    orientation: [0.0, 0.0, 0.0, 1.0] # qx, qy, qz, qw
   

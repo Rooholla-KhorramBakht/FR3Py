@@ -91,7 +91,6 @@ fr3 = world.scene.add(
 )
 world.reset()
 fr3.initialize()
-
 # Add cameras
 print("Adding cameras")
 ann = AnnotatorManager(world)
@@ -100,44 +99,45 @@ for camera in cameras:
     ann.registerCamera(
         camera["prim_path"],
         camera["name"],
-        (0.485, 0.0258, 0.028),
-        (-90.0, 180.0, 90.0),
+        (0.0, 0.0, 0.3),  # xyz
+        (0., 0., 0., 1.), # xyzw
         resolution=camera["resolution"],
     )
+    for type in camera["type"]:
+        ann.registerAnnotator(type, camera["name"])
 
-for camera in cameras:
-    ann.registerAnnotator(camera["type"], camera["name"])
     ann.setClippingRange(camera["name"], 0.2, 1000000.0)
-    ann.setFocalLength(camera["name"], 28)
+    ann.setFocalLength(camera["name"], 28)   
 
 # Add the shared memory data channels for image and LiDAR data
 print("Creating shared memory data pipes")
 camera_pipes = {}
 for camera in cameras:
-    if camera["type"] == "pointcloud":
-        pipe = NumpyMemMapDataPipe(
-            camera["name"] + "_" + camera["type"],
-            force=True,
-            dtype="float32",
-            shape=(camera["resolution"][1] * camera["resolution"][0], 3),
-        )
-        camera_pipes[camera["name"] + "_" + camera["type"]] = pipe
-    elif camera["type"] == "rgb":
-        pipe = NumpyMemMapDataPipe(
-            camera["name"] + "_" + camera["type"],
-            force=True,
-            dtype="uint8",
-            shape=(camera["resolution"][1], camera["resolution"][0], 4),
-        )
-        camera_pipes[camera["name"] + "_" + camera["type"]] = pipe
-    elif camera["type"] == "distance_to_camera":
-        pipe = NumpyMemMapDataPipe(
-            camera["name"] + "_" + camera["type"],
-            force=True,
-            dtype="uint8",
-            shape=(camera["resolution"][1], camera["resolution"][0]),
-        )
-        camera_pipes[camera["name"] + "_" + camera["type"]] = pipe
+    for type in camera["type"]:
+        if type == "pointcloud":
+            pipe = NumpyMemMapDataPipe(
+                camera["name"] + "_" + type,
+                force=True,
+                dtype="float32",
+                shape=(camera["resolution"][1] * camera["resolution"][0], 3),
+            )
+            camera_pipes[camera["name"] + "_" + type] = pipe
+        elif type == "rgb":
+            pipe = NumpyMemMapDataPipe(
+                camera["name"] + "_" + type,
+                force=True,
+                dtype="uint8",
+                shape=(camera["resolution"][1], camera["resolution"][0], 4),
+            )
+            camera_pipes[camera["name"] + "_" + type] = pipe
+        elif type == "distance_to_camera":
+            pipe = NumpyMemMapDataPipe(
+                camera["name"] + "_" + type,
+                force=True,
+                dtype="uint8",
+                shape=(camera["resolution"][1], camera["resolution"][0]),
+            )
+            camera_pipes[camera["name"] + "_" + type] = pipe
 
 # Store simulation hyperparamters in shared memory
 print("Storing simulation hyperparamters in shared memory")
@@ -201,25 +201,25 @@ while simulation_app.is_running():
         world.step(render=True)
         # Push the sensor data to the shared memory pipes
         for camera in cameras:
-            data = ann.getData(f"{camera['name']}:{camera['type']}")
-            if camera["type"] == "pointcloud":
-                payload = data["data"]
-                if payload.shape[0]:
-                    camera_pipes[camera["name"] + "_" + camera["type"]].write(
-                        np.zeros(
-                            (camera["resolution"][1] * camera["resolution"][0], 3)
-                        ),
-                        match_length=True,
-                    )
-                    camera_pipes[camera["name"] + "_" + camera["type"]].write(
-                        payload, match_length=True
-                    )
-            else:
-                if data.shape[0]:
-                    camera_pipes[camera["name"] + "_" + camera["type"]].write(
-                        data, match_length=False
-                    )
-
+            for type in camera["type"]:
+                data = ann.getData(f"{camera['name']}:{type}")
+                if type == "pointcloud":
+                    payload = data["data"]
+                    if payload.shape[0]:
+                        camera_pipes[camera["name"] + "_" + type].write(
+                            np.zeros(
+                                (camera["resolution"][1] * camera["resolution"][0], 3)
+                            ),
+                            match_length=True,
+                        )
+                        camera_pipes[camera["name"] + "_" + type].write(
+                            payload, match_length=True
+                        )
+                else:
+                    if data.shape[0]:
+                        camera_pipes[camera["name"] + "_" + type].write(
+                            data, match_length=False
+                        )
     else:
         world.step(render=False)
 
