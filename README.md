@@ -46,7 +46,9 @@ sudo python3 tools/unicast_config.py <interface_name> # e.g. eth0
 ```
 ## Simulation
 ### Isaac Sim 
-We provide a simple simulation environment based on the Isaac Sim. The Isaacsim simulation only implements the joint velocity interface and follows the exact interfacing API as the one used for communicating with the real robot. To use the simulator, create a link to the builtin Python interpreter provided by Isaac Sim:
+We provide a simple simulation environment based on the Isaac Sim. The Isaacsim simulation only implements the joint velocity interface. The API follows the exact interfacing API as the one used for communicating with the real robot, and is designed to simulate the experience of using the real-robot as closely as possible.
+
+To use the simulator, create a link to the builtin Python interpreter provided by Isaac Sim:
 
 ```bash
 cd FR3Py
@@ -62,6 +64,16 @@ After installation, we can run the simulation node simply by running the `fr3py.
 
 ```bash
 ./fr3py.sh --sim
+```
+Then communicate with the robot through three simple API calls:
+
+```python 
+from FR3Py.sim.interface import FR3IsaacSim
+robot = FR3IsaacSim(robot_id='fr3')
+
+images = robot.readCameras()
+state = robot.getStates()
+robot.sendCommands(cmd)
 ```
 
 **Note:** The simulation scene and configuration can be changed through the modification of the `FR3Py/sim/isaac/sim_config.yaml` file. Note that after modification, the package must be installed again through `./fr3py.sh -i`. 
