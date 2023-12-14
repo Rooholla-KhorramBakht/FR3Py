@@ -42,7 +42,7 @@ ifconfig
 ```
 and use it to run the `unicast_config.py` file in the `tools` directory of this repository. This script much be executed with sudo privileges:
 ```bash
-sudo python3 tools/unicast_config.py <interface_name> # e.g. eth0
+sudo python3 tools/multicast_config.py <interface_name> # e.g. eth0
 ```
 ## Simulation
 ### Isaac Sim 
