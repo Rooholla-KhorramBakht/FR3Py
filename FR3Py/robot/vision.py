@@ -2,7 +2,7 @@ import threading
 
 import numpy as np
 import pyrealsense2 as rs
-
+import cv2
 
 class RealSenseCamera:
     """
@@ -279,6 +279,42 @@ class RealSenseCamera:
             "D": dist,
         }
     
+    def alignDepth2Color(self):
+
+        depth_scale = self.depth_sensor.get_depth_scale()
+
+        print("Depth Scale is: " , depth_scale)
+
+        clipping_distance_in_meters = 1 #1 meter
+        clipping_distance = clipping_distance_in_meters / depth_scale
+
+
+        # Create an align object
+        # rs.align allows us to perform alignment of depth frames to others frames
+        # The "align_to" is the stream type to which we plan to align depth frames.
+        align_to = rs.stream.color
+        align = rs.align(align_to)
+
+        frames = self.pipeline.wait_for_frames()
+
+        # Align the depth frame to color frame
+        aligned_frames = align.process(frames)
+
+        # Get aligned frames
+        aligned_depth_frame = aligned_frames.get_depth_frame() # aligned_depth_frame is a 640x480 depth image
+        color_frame = aligned_frames.get_color_frame()
+
+        # Validate that both frames are valid
+        # if not aligned_depth_frame or not color_frame:
+            
+
+        depth_image = np.asanyarray(aligned_depth_frame.get_data())
+        color_image = np.asanyarray(color_frame.get_data())
+
+
+        return {"Depth" : depth_image, "Color" : color_image}
+
+    
 
 
 def depth2PointCloud(
@@ -336,3 +372,14 @@ def depth2PointCloud(
 
     return point_cloud
 
+def saveTo16bits(image):
+    img_name = "{}.png".format(img_name)
+    cv2.imwrite(img_name, image.astype(np.uint16), -1)
+
+
+
+
+
+
+
+    
