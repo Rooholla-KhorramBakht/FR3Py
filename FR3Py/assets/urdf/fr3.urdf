@@ -9,7 +9,7 @@
   <link name="fr3_link0">
     <visual>
       <geometry>
-        <mesh filename="package://robots/meshes/visual/link0.obj"/>
+        <mesh filename="package://assets/urdf/meshes/visual/link0.obj"/>
       </geometry>
       <material name="panda_white">
         <color rgba="1. 1. 1. 1."/>
@@ -17,7 +17,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://robots/meshes/collision/link0.stl"/>
+        <mesh filename="package://assets/urdf/meshes/collision/link0.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -30,7 +30,7 @@
   <link name="fr3_link1">
     <visual>
       <geometry>
-        <mesh filename="package://robots/meshes/visual/link1.obj"/>
+        <mesh filename="package://assets/urdf/meshes/visual/link1.obj"/>
       </geometry>
       <material name="panda_white">
         <color rgba="1. 1. 1. 1."/>
@@ -38,7 +38,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://robots/meshes/collision/link1.stl"/>
+        <mesh filename="package://assets/urdf/meshes/collision/link1.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -61,7 +61,7 @@
   <link name="fr3_link2">
     <visual>
       <geometry>
-        <mesh filename="package://robots/meshes/visual/link2.obj"/>
+        <mesh filename="package://assets/urdf/meshes/visual/link2.obj"/>
       </geometry>
       <material name="panda_white">
         <color rgba="1. 1. 1. 1."/>
@@ -69,7 +69,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://robots/meshes/collision/link2.stl"/>
+        <mesh filename="package://assets/urdf/meshes/collision/link2.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -92,7 +92,7 @@
   <link name="fr3_link3">
     <visual>
       <geometry>
-        <mesh filename="package://robots/meshes/visual/link3.obj"/>
+        <mesh filename="package://assets/urdf/meshes/visual/link3.obj"/>
       </geometry>
       <material name="panda_white">
         <color rgba="1. 1. 1. 1."/>
@@ -100,7 +100,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://robots/meshes/collision/link3.stl"/>
+        <mesh filename="package://assets/urdf/meshes/collision/link3.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -123,7 +123,7 @@
   <link name="fr3_link4">
     <visual>
       <geometry>
-        <mesh filename="package://robots/meshes/visual/link4.obj"/>
+        <mesh filename="package://assets/urdf/meshes/visual/link4.obj"/>
       </geometry>
       <material name="panda_white">
         <color rgba="1. 1. 1. 1."/>
@@ -131,7 +131,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://robots/meshes/collision/link4.stl"/>
+        <mesh filename="package://assets/urdf/meshes/collision/link4.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -154,7 +154,7 @@
   <link name="fr3_link5">
     <visual>
       <geometry>
-        <mesh filename="package://robots/meshes/visual/link5.obj"/>
+        <mesh filename="package://assets/urdf/meshes/visual/link5.obj"/>
       </geometry>
       <material name="panda_white">
         <color rgba="1. 1. 1. 1."/>
@@ -162,7 +162,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://robots/meshes/collision/link5.stl"/>
+        <mesh filename="package://assets/urdf/meshes/collision/link5.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -185,7 +185,7 @@
   <link name="fr3_link6">
     <visual>
       <geometry>
-        <mesh filename="package://robots/meshes/visual/link6.obj"/>
+        <mesh filename="package://assets/urdf/meshes/visual/link6.obj"/>
       </geometry>
       <material name="panda_white">
         <color rgba="1. 1. 1. 1."/>
@@ -193,7 +193,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://robots/meshes/collision/link6.stl"/>
+        <mesh filename="package://assets/urdf/meshes/collision/link6.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -216,7 +216,7 @@
   <link name="fr3_link7">
     <visual>
       <geometry>
-        <mesh filename="package://robots/meshes/visual/link7.obj"/>
+        <mesh filename="package://assets/urdf/meshes/visual/link7.obj"/>
       </geometry>
       <material name="panda_white">
         <color rgba="1. 1. 1. 1."/>
@@ -224,7 +224,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://robots/meshes/collision/link7.stl"/>
+        <mesh filename="package://assets/urdf/meshes/collision/link7.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -267,7 +267,7 @@
   <link name="fr3_hand">
     <visual>
       <geometry>
-        <mesh filename="package://robots/meshes/visual/hand.obj"/>
+        <mesh filename="package://assets/urdf/meshes/visual/hand.obj"/>
       </geometry>
       <material name="panda_white">
         <color rgba="1. 1. 1. 1."/>
@@ -275,7 +275,7 @@
     </visual>
     <collision>
       <geometry>
-        <mesh filename="package://robots/meshes/collision/hand.stl"/>
+        <mesh filename="package://assets/urdf/meshes/collision/hand.stl"/>
       </geometry>
     </collision>
     <inertial>
@@ -303,7 +303,7 @@
   <link name="fr3_leftfinger">
     <visual>
       <geometry>
-        <mesh filename="package://robots/meshes/visual/finger.obj"/>
+        <mesh filename="package://assets/urdf/meshes/visual/finger.obj"/>
       </geometry>
       <material name="panda_white">
         <color rgba="1. 1. 1. 1."/>
@@ -348,7 +348,7 @@
     <visual>
       <origin rpy="0 0 3.141592653589793" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://robots/meshes/visual/finger.obj"/>
+        <mesh filename="package://assets/urdf/meshes/visual/finger.obj"/>
       </geometry>
       <material name="panda_white">
         <color rgba="1. 1. 1. 1."/>

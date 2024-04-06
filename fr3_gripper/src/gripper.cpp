@@ -7,7 +7,7 @@
 namespace py = pybind11;
 using namespace pybind11::literals;
 
-PYBIND11_MODULE(gripper, handle)
+PYBIND11_MODULE(fr3_gripper, handle)
 {
   py::class_<franka::GripperState>(handle, "GripperState")
     .def(py::init<>())
