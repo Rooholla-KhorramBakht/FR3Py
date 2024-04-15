@@ -65,7 +65,7 @@ class FR3Real:
         q = np.hstack([msg.q])
         dq = np.hstack([msg.dq])
         T = np.hstack([msg.T])
-        self.joint_state = {"q": q, "dq": dq, "T": T}
+        self.joint_state = {"q": q[:7], "dq": dq[:7], "T": T[:7]}
         # Call an arbitrary user callback
         if self.user_callback is not None:
             self.user_callback(self.joint_state)
@@ -85,16 +85,17 @@ class FR3Real:
         else:
             return self.joint_state
 
-    def sendCommands(self, cmd):
+    def setCommands(self, cmd):
         """
         Send a joint command to the robot. If the C++ driver is started with 
         joint_velocity interface, the command is joint velocities; otherwise,
         the command is joint torques.
 
-        @param cmd: (numpy.ndarray, shape=(9,)) The joint command to send
+        @param cmd: (numpy.ndarray, shape=(7,)) The joint command to send
         """
+        assert cmd.shape == (7,), "Command shape must be (7,)"
         self.command_msg.timestamp = int(self.trigger_timestamp * 1000000)
-        self.command_msg.cmd = cmd.tolist()
+        self.command_msg.cmd = cmd.tolist()+ [0, 0]
         self.lc.publish(self.command_topic_name, self.command_msg.encode())
         self.cmd_log = cmd
 
