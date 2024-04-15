@@ -1,0 +1,4 @@
+<mujoco model="cabinet_assets">
+    <texture name="wood_texture" type="cube" height="1" width="1" file="wood.png" />
+    <material name="wood" texture="wood_texture" rgba="0.8 0.8 0.8 1" shininess="0.2" reflectance="0.3" texuniform="false" />
+</mujoco>

@@ -1,0 +1,5 @@
+<mujoco model="cabinet_default">
+    <default class="cabinet" >
+        <geom group="2" contype="0" conaffinity="0" type="mesh" material="wood"/>
+    </default>
+</mujoco>

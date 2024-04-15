@@ -1,0 +1,42 @@
+<mujoco model="fr3_with_block">
+  <compiler angle="radian" meshdir="mj_assets" autolimits="true"/>
+  <option integrator="implicitfast"/>
+  <statistic center="0.3 0 0.4" extent="1"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.3 0.3 0.3" specular="0 0 0"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="120" elevation="-20"/>
+  </visual>
+
+  <default>
+    <include file="./fr3_default.xml"/>
+  </default>
+
+  <asset>
+    <material name="block_red" rgba="1 0 0 1" reflectance="1" shininess=".5" />
+    <include file="./fr3_assets.xml"/>
+  </asset>
+
+  <worldbody>
+    <light name="top" pos="0 0 2" mode="trackcom"/>
+    <light pos="0 0 1.5" dir="0 0 -1" directional="true"/>
+    
+    <include file="./fr3_body.xml"/>
+
+    <body name="block" pos="0.4 0.4 0.0125">
+      <joint type="free" damping="1"/>
+      <inertial mass="0.01" pos="0 0 0" fullinertia="1.04e-6 1.04e-6 1.04e-6 0.0 0.0 0.0"/>
+      <geom type="box" size="0.025 0.025 0.025" pos="0 0 0" material="block_red"/>
+    </body>
+  </worldbody>
+
+  <include file="./fr3_motors.xml"/>
+
+  <keyframe>
+    <key name="home" qpos="0 0 0 -1.57079 0 1.57079 -0.7853 0.04 0.04 0.4 0.4 0.125 1.0 0.0 0.0 0.0" ctrl="0 0 0 -1.57079 0 1.57079 -0.7853 255"/>
+  </keyframe>
+
+</mujoco>
+
+  
