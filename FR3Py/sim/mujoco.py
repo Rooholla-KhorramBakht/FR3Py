@@ -8,12 +8,15 @@ import os
 from scipy.spatial.transform import Rotation
 
 class FR3Sim:
-    def __init__(self, interface_type = 'torque', render=True, dt=0.002):
+    def __init__(self, interface_type = 'torque', render=True, dt=0.002, xml_path=None):
         assert interface_type in ['torque', 'velocity'], 'The interface should be velocity or torque'
         self.interface_type = interface_type
-        self.model = mujoco.MjModel.from_xml_path(
-            os.path.join(ASSETS_PATH,'mujoco/fr3.xml')
-        )
+        if xml_path is not None:
+            self.model = mujoco.MjModel.from_xml_path(xml_path)
+        else:
+            self.model = mujoco.MjModel.from_xml_path(
+                os.path.join(ASSETS_PATH,'mujoco/fr3.xml')
+            )
         self.simulated = True
         self.data = mujoco.MjData(self.model)
         self.dt = dt
@@ -57,7 +60,7 @@ class FR3Sim:
     def getJointStates(self):
         return {"q":self.data.qpos[:7], 
                "dq":self.data.qvel[:7],
-               'tau_est':self.actuator_tau[:7]}
+               'tau_est':(self.data.qfrc_applied.squeeze()+self.data.qfrc_smooth.squeeze())[0:7]}
 
     def setCommands(self, cmd):
         self.dq_des = cmd
