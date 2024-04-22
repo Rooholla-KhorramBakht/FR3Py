@@ -60,7 +60,7 @@ class FR3Sim:
     def getJointStates(self):
         return {"q":self.data.qpos[:7], 
                "dq":self.data.qvel[:7],
-               'tau_est':(self.data.qfrc_applied.squeeze()+self.data.qfrc_smooth.squeeze())[0:7]}
+               'tau_est':(self.data.qfrc_constraint.squeeze()+self.data.qfrc_smooth.squeeze())[0:7]}
 
     def setCommands(self, cmd):
         self.dq_des = cmd
