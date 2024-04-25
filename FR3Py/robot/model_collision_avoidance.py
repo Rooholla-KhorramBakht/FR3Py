@@ -51,7 +51,6 @@ class PinocchioModel:
             # "LINK5": self.FR3_LINK5_FRAME_ID,
             # "LINK6": self.FR3_LINK6_FRAME_ID,
             # "LINK7": self.FR3_LINK7_FRAME_ID,
-            # "HAND_BB": self.FR3_HAND_BB_FRAME_ID,
             # "HAND": self.FR3_HAND_FRAME_ID,
             "EE": self.EE_FRAME_ID,
             # "CAMERA": self.FR3_CAMERA_FRAME_ID,
@@ -62,6 +61,7 @@ class PinocchioModel:
             "LINK5_2_BB": self.FR3_LINK5_2_BB_FRAME_ID,
             "LINK6_BB": self.FR3_LINK6_BB_FRAME_ID,
             "LINK7_BB": self.FR3_LINK7_BB_FRAME_ID,
+            "HAND_BB": self.FR3_HAND_BB_FRAME_ID,
         }
 
         # Define nominal joint position
