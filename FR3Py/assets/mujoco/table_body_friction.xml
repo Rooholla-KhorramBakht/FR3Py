@@ -23,8 +23,8 @@
         <geom type="box" size="0.023 0.023 .337" pos="0 -.377 0.440" material="vention_blue"/>
 
         <!-- top board -->
-        <geom type="box" size="0.612 0.409 0.023" pos="0 0 0.801" friction=".1" material="vention_black"/>
-        <geom type="box" size="0.614 0.411 0.023" pos="0 0 0.790" friction=".1" material="vention_blue"/>
+        <geom type="box" size="0.612 0.409 0.023" pos="0 0 0.801" friction=".1 0 0" material="vention_black"/>
+        <geom type="box" size="0.614 0.411 0.023" pos="0 0 0.790" friction=".1 0 0" material="vention_blue"/>
 
         <!-- bottom board -->
         <geom type="box" size="0.602 0.399 0.005" pos="0 0 0.150" material="vention_black"/>
