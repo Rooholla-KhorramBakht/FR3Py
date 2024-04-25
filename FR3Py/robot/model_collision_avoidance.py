@@ -140,9 +140,10 @@ class PinocchioModel:
             )
 
             # Advanced calculation
-            info[f"dJdq_{frame_name}"] = pin.getFrameClassicalAcceleration(
+            # dJdq = dJ/dt * dq, shape (6,)
+            info[f"dJdq_{frame_name}"] = np.array(pin.getFrameClassicalAcceleration(
                 self.robot.model, self.robot.data, frame_id, self.jacobian_frame
-            )
+            ))
 
         # Get dynamics
         info["M"] = self.robot.mass(q)
