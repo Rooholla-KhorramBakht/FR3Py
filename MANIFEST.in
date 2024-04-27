@@ -7,3 +7,11 @@ include FR3Py/assets/urdf/*.urdf
 include FR3Py/assets/usd/*.usda
 include FR3Py/assets/usd/materials/*.png
 include FR3Py/sim/isaac/*.yaml
+include FR3Py/assets/mujoco/meshes/collision/*.stl
+include FR3Py/assets/mujoco/meshes/visual/*.mtl
+include FR3Py/assets/mujoco/meshes/visual/*.png
+include FR3Py/assets/mujoco/meshes/visual/*.obj
+include FR3Py/assets/mujoco/mj_assets/*.obj
+include FR3Py/assets/mujoco/mj_assets/*.stl
+include FR3Py/assets/mujoco/*.urdf
+include FR3Py/assets/mujoco/*.xml

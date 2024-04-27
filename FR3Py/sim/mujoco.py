@@ -8,11 +8,15 @@ import os
 from scipy.spatial.transform import Rotation
 
 class FR3Sim:
-    def __init__(self, render=True, dt=0.002):
-        
-        self.model = mujoco.MjModel.from_xml_path(
-            os.path.join(ASSETS_PATH, 'mujoco/fr3.xml')
-        )
+    def __init__(self, interface_type = 'torque', render=True, dt=0.002, xml_path=None):
+        assert interface_type in ['torque', 'velocity'], 'The interface should be velocity or torque'
+        self.interface_type = interface_type
+        if xml_path is not None:
+            self.model = mujoco.MjModel.from_xml_path(xml_path)
+        else:
+            self.model = mujoco.MjModel.from_xml_path(
+                os.path.join(ASSETS_PATH,'mujoco/fr3.xml')
+            )
         self.simulated = True
         self.data = mujoco.MjData(self.model)
         self.dt = dt
@@ -45,7 +49,9 @@ class FR3Sim:
         self.jacr = np.zeros((3, self.nv))
         self.M = np.zeros((self.nv, self.nv))
         self.latest_command_stamp = time.time()
-        self.actuator_tau = np.zeros(12)
+        self.actuator_tau = np.zeros(7)
+        self.tau_ff = np.zeros(7)
+        self.dq_des = np.zeros(7)
 
     def reset(self):
         self.data.qpos[:7] = self.q0
@@ -54,7 +60,7 @@ class FR3Sim:
     def getJointStates(self):
         return {"q":self.data.qpos[:7], 
                "dq":self.data.qvel[:7],
-               'tau_est':self.actuator_tau[:7]}
+               'tau_est':(self.data.qfrc_constraint.squeeze()+self.data.qfrc_smooth.squeeze())[0:7]}
 
     def setCommands(self, cmd):
         self.dq_des = cmd
@@ -62,15 +68,18 @@ class FR3Sim:
         self.latest_command_stamp = time.time()
         
     def step(self):
-        state = self.getJointStates()
-        q, dq = state['q'], state['dq']
-        nle = self.getDynamicsParams()['nle']
-        tau = nle[:7]
-        # tau = np.diag(self.kp)@(self.q_des-q).reshape(12,1)+ \
-        #       np.diag(self.kv)@(self.dq_des-dq).reshape(12,1)+self.tau_ff.reshape(12,1)
-        # self.actuator_tau = tau
-        self.data.ctrl[:7] = tau.squeeze()
+        if self.interface_type =='torque':
+            nle = self.getDynamicsParams()['nle']
+            tau = nle[:7].squeeze()+self.tau_ff
+            self.actuator_tau = tau
+        else:
+            state = self.getJointStates()
+            q, dq = state['q'], state['dq']
+            nle = self.getDynamicsParams()['nle']
+            tau = nle[:7].squeeze()+20*(self.dq_des-dq)
+            self.actuator_tau = tau
 
+        self.data.ctrl[:7] = tau.squeeze()
         self.step_counter += 1
         mujoco.mj_step(self.model, self.data)
         # Render every render_ds_ratio steps (60Hz GUI update)
