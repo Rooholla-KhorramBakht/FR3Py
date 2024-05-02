@@ -140,3 +140,24 @@ class FR3Sim:
                                 point2[0], point2[1], point2[2])
         
         return 
+    
+    def add_visual_ellipsoid(self, size, pos, mat, rgba, id_geom_offset=0, limit_num=False):
+        """Adds one ellipsoid to an mjvScene."""
+        scene = self.viewer.user_scn
+        if limit_num:
+            if self.ngeom >= self.maxgeom:
+                id_geom = self.ngeom % self.maxgeom + id_geom_offset
+            else:
+                scene.ngeom += 1
+                id_geom = self.ngeom + id_geom_offset
+            self.ngeom += 1
+        else:
+            id_geom = scene.ngeom
+            scene.ngeom += 1
+            
+        # initialise a new ellipsoid, add it to the scene
+        mujoco.mjv_initGeom(scene.geoms[id_geom],
+                            mujoco.mjtGeom.mjGEOM_ELLIPSOID, np.array(size),
+                            np.array(pos), np.array(mat).flatten(), np.array(rgba).astype(np.float32))
+        self.viewer.sync()
+        return
