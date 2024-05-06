@@ -131,6 +131,8 @@ class FR3Sim:
                 scene.ngeom += 1
                 id_geom = self.ngeom + id_geom_offset
             self.ngeom += 1
+        elif id_geom_offset < scene.ngeom:
+            id_geom = id_geom_offset
         else:
             id_geom = scene.ngeom
             scene.ngeom += 1
@@ -155,6 +157,8 @@ class FR3Sim:
                 scene.ngeom += 1
                 id_geom = self.ngeom + id_geom_offset
             self.ngeom += 1
+        elif id_geom_offset < scene.ngeom:
+            id_geom = id_geom_offset
         else:
             id_geom = scene.ngeom
             scene.ngeom += 1
