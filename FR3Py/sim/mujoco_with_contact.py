@@ -59,6 +59,7 @@ class FR3Sim:
         self.actuator_tau = np.zeros(7)
         self.tau_ff = np.zeros(7)
         self.dq_des = np.zeros(7)
+        self.finger_postion = np.zeros(2)
 
     def reset(self, q0):
         self.data.qpos[:] = q0
@@ -74,9 +75,10 @@ class FR3Sim:
                "dq":self.data.qvel[7:9],
                'tau_est':(self.data.qfrc_constraint.squeeze()+self.data.qfrc_smooth.squeeze())[7:9]}
 
-    def setCommands(self, cmd):
-        self.dq_des = cmd
-        self.tau_ff = cmd
+    def setCommands(self, joint_cmd, finger_cmd):
+        self.dq_des = joint_cmd
+        self.tau_ff = joint_cmd
+        self.finger_postion = finger_cmd
         self.latest_command_stamp = time.time()
         
     def step(self):
@@ -92,6 +94,8 @@ class FR3Sim:
             self.actuator_tau = tau
 
         self.data.ctrl[:7] = tau.squeeze()
+        self.data.qpos[7:9] = self.finger_postion.squeeze()
+        self.data.qvel[7:9] = np.zeros(2)
         self.step_counter += 1
         mujoco.mj_step(self.model, self.data)
         # Render every render_ds_ratio steps (60Hz GUI update)
