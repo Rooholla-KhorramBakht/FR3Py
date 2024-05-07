@@ -1,5 +1,5 @@
 <mujoco model="table_body">
-    <body name="vention_table" childclass="vention" quat="0.7071 0 0 0.7071">
+    <body name="vention_table" childclass="vention" pos="0 0.2 0" quat="0.7071 0 0 0.7071">
         <!-- leg floor pads -->
         <geom type="cylinder" size="0.040 0.010" pos="-.585 -.383 0.010" material="vention_black"/>
         <geom type="cylinder" size="0.040 0.010" pos="0.585 -.383 0.010" material="vention_black"/>

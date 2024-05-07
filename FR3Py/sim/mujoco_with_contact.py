@@ -59,6 +59,7 @@ class FR3Sim:
         self.actuator_tau = np.zeros(7)
         self.tau_ff = np.zeros(7)
         self.dq_des = np.zeros(7)
+        self.finger_postion = np.zeros(2)
 
     def reset(self, q0):
         self.data.qpos[:] = q0
@@ -74,9 +75,10 @@ class FR3Sim:
                "dq":self.data.qvel[7:9],
                'tau_est':(self.data.qfrc_constraint.squeeze()+self.data.qfrc_smooth.squeeze())[7:9]}
 
-    def setCommands(self, cmd):
-        self.dq_des = cmd
-        self.tau_ff = cmd
+    def setCommands(self, joint_cmd, finger_cmd):
+        self.dq_des = joint_cmd
+        self.tau_ff = joint_cmd
+        self.finger_postion = finger_cmd
         self.latest_command_stamp = time.time()
         
     def step(self):
@@ -92,6 +94,8 @@ class FR3Sim:
             self.actuator_tau = tau
 
         self.data.ctrl[:7] = tau.squeeze()
+        self.data.qpos[7:9] = self.finger_postion.squeeze()
+        self.data.qvel[7:9] = np.zeros(2)
         self.step_counter += 1
         mujoco.mj_step(self.model, self.data)
         # Render every render_ds_ratio steps (60Hz GUI update)
@@ -127,6 +131,8 @@ class FR3Sim:
                 scene.ngeom += 1
                 id_geom = self.ngeom + id_geom_offset
             self.ngeom += 1
+        elif id_geom_offset < scene.ngeom:
+            id_geom = id_geom_offset
         else:
             id_geom = scene.ngeom
             scene.ngeom += 1
@@ -140,3 +146,26 @@ class FR3Sim:
                                 point2[0], point2[1], point2[2])
         
         return 
+    
+    def add_visual_ellipsoid(self, size, pos, mat, rgba, id_geom_offset=0, limit_num=False):
+        """Adds one ellipsoid to an mjvScene."""
+        scene = self.viewer.user_scn
+        if limit_num:
+            if self.ngeom >= self.maxgeom:
+                id_geom = self.ngeom % self.maxgeom + id_geom_offset
+            else:
+                scene.ngeom += 1
+                id_geom = self.ngeom + id_geom_offset
+            self.ngeom += 1
+        elif id_geom_offset < scene.ngeom:
+            id_geom = id_geom_offset
+        else:
+            id_geom = scene.ngeom
+            scene.ngeom += 1
+            
+        # initialise a new ellipsoid, add it to the scene
+        mujoco.mjv_initGeom(scene.geoms[id_geom],
+                            mujoco.mjtGeom.mjGEOM_ELLIPSOID, np.array(size),
+                            np.array(pos), np.array(mat).flatten(), np.array(rgba).astype(np.float32))
+        self.viewer.sync()
+        return
