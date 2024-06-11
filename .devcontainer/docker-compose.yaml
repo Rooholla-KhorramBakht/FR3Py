@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  fr3py:
+    build: .
+    container_name: fr3py-container
+    network_mode: host
+    privileged: true
+    command: bash
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ../:/home/FR3Py
+    environment:
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+    runtime: nvidia
+    stdin_open: true
+    tty: true

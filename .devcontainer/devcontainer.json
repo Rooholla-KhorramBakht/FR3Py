@@ -1,0 +1,18 @@
+// https://containers.dev/implementors/json_reference/
+{
+    "name": "fr3py", 
+    "dockerComposeFile": "docker-compose.yaml",
+    "workspaceFolder": "/home/FR3Py",
+    "service": "fr3py",
+    "remoteUser": "root", 
+    "postCreateCommand": "cd /home/pcd-cbf && pip install -e .",
+    "customizations": {
+      "vscode": {
+        "extensions": [
+          "dbaeumer.vscode-eslint", // Existing ESLint extension
+          "ms-python.python", // Python extension by Microsoft
+          "ms-toolsai.jupyter" // Jupyter extension by Microsoft
+        ]
+      }
+    }
+  }
