@@ -31,12 +31,15 @@ class WaypointController:
     def __init__(self, kp=0.1):
         # define solver
         self.robot = PinocchioModel()
-        self.solver = QPSolver(9)
+        self.solver = QPSolver(7)
         self.initialized = False
         self.kp = kp
 
     def compute(self, q, dq, T_cmd=None):
         # Get the robot paramters for the given state
+        q = np.hstack([q, np.zeros(2)])
+        dq = np.hstack([dq, np.zeros(2)])
+        
         info = self.robot.getInfo(q, dq)
         if T_cmd is not None:
             self.p_cmd = T_cmd[0:3, -1].reshape(3, 1)
@@ -67,7 +70,7 @@ class WaypointController:
         jacobian = info["J_HAND"]
 
         # compute joint-centering joint acceleration
-        dq_nominal = 0.5 * (self.robot.q_nominal - q[:, np.newaxis])
+        dq_nominal = 0.5 * (self.robot.q_nominal[:7,:] - q[:7, np.newaxis])
 
         # compute error rotation matrix
         R_err = self.R_cmd @ R_current.T
@@ -88,8 +91,8 @@ class WaypointController:
             "p_current": p_current,
             "dp_target": dp_target,
             "Kp": self.kp * np.eye(6),
-            "dq_nominal": dq_nominal,
-            "nullspace_proj": np.eye(9) - pinv_jac @ jacobian,
+            "dq_nominal": dq_nominal[:7,:],
+            "nullspace_proj": np.eye(7) - pinv_jac @ jacobian,
         }
 
         # solver for target joint velocity

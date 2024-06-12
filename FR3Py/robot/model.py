@@ -82,11 +82,20 @@ class PinocchioModel:
         R_EE: end-effector rotation matrix
         P_EE: end-effector position vector
         """
-        assert q.shape == (9,), "q vector should be 9,"
-        assert dq.shape == (9,), "dq vector should be 9,"
-        self.robot.computeJointJacobians(q)
-        self.robot.framesForwardKinematics(q)
-        self.robot.centroidalMomentum(q, dq)
+        _q = q.squeeze()
+        _dq = dq.squeeze()
+
+        assert _q.shape == (9,) or _q.shape == (7,), "q vector should be 9 or 7"
+        assert _dq.shape == (9,) or _dq.shape == (7,), "dq vector should be 9 or 7,"
+
+        if q.shape[0] == 7:
+            _q = np.hstack([_q, np.zeros(2)])
+        if dq.shape[0] == 7:
+            _dq = np.hstack([_dq, np.zeros(2)])
+
+        self.robot.computeJointJacobians(_q)
+        self.robot.framesForwardKinematics(_q)
+        self.robot.centroidalMomentum(_q, _dq)
         # Get Jacobian from grasp target frame
         # preprocessing is done in get_state_update_pinocchio()
         jacobian = self.robot.getFrameJacobian(self.EE_FRAME_ID, self.jacobian_frame)
@@ -152,20 +161,20 @@ class PinocchioModel:
             np.eye(3), np.array(([0.0], [0.0], [0.06])), self.FR3_HAND_FRAME_ID
         )
         # Get dynamics
-        Minv = pin.computeMinverse(self.robot.model, self.robot.data, q)
-        M = self.robot.mass(q)
-        nle = self.robot.nle(q, dq)
-        f = np.vstack((dq[:, np.newaxis], -Minv @ nle[:, np.newaxis]))
+        Minv = pin.computeMinverse(self.robot.model, self.robot.data, _q)
+        M = self.robot.mass(_q)
+        nle = self.robot.nle(_q, _dq)
+        f = np.vstack((_dq[:, np.newaxis], -Minv @ nle[:, np.newaxis]))
         g = np.vstack((np.zeros((9, 9)), Minv))
         robot_states = {
-            "q": q,
-            "dq": dq,
-            "f(x)": f,
-            "g(x)": g,
-            "M(q)": M,
-            "M(q)^{-1}": Minv,
-            "nle": nle,
-            "G": self.robot.gravity(q),
+            "q": _q,
+            "dq": _dq,
+            "f(x)": f[:7],
+            "g(x)": g[:7],
+            "M(q)": M[:7,:7],
+            "M(q)^{-1}": Minv[:7,:7],
+            "nle": nle[:7],
+            "G": self.robot.gravity(_q)[:7],
             "R_LINK3": copy.deepcopy(R_link3),
             "P_LINK3": copy.deepcopy(p_link3),
             "q_LINK3": copy.deepcopy(q_LINK3),
@@ -193,13 +202,13 @@ class PinocchioModel:
             "R_HAND": copy.deepcopy(R_hand),
             "P_HAND": copy.deepcopy(p_hand),
             "q_HAND": copy.deepcopy(q_HAND),
-            "J_HAND": jacobian_hand,
-            "pJ_HAND": pinv_jacobian_hand,
+            "J_HAND": jacobian_hand[...,:7],
+            "pJ_HAND": pinv_jacobian_hand[:7,...],
             "R_EE": copy.deepcopy(self.robot.data.oMf[self.EE_FRAME_ID].rotation),
             "P_EE": copy.deepcopy(self.robot.data.oMf[self.EE_FRAME_ID].translation),
-            "J_EE": jacobian,
+            "J_EE": jacobian[...,:7],
             "dJ_EE": dJ,
-            "pJ_EE": pinv_jac,
+            "pJ_EE": pinv_jac[:7,...],
             "R_EE": copy.deepcopy(self.robot.data.oMf[self.EE_FRAME_ID].rotation),
             "P_EE": copy.deepcopy(self.robot.data.oMf[self.EE_FRAME_ID].translation),
         }

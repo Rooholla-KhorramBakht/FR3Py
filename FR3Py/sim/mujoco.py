@@ -56,6 +56,11 @@ class FR3Sim:
     def reset(self):
         self.data.qpos[:7] = self.q0
         self.data.qvel[:7] = np.zeros(7)
+        mujoco.mj_step(self.model, self.data)
+        # Render every render_ds_ratio steps (60Hz GUI update)
+        if self.render and (self.step_counter%self.render_ds_ratio)==0:
+            self.viewer.sync()
+        
 
     def getJointStates(self):
         return {"q":self.data.qpos[:7], 
