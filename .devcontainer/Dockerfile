@@ -36,6 +36,7 @@ RUN pip3 install scikit-learn casadi mujoco pin
 # Compile and Install LCM
 RUN cd /home/ && git clone https://github.com/lcm-proj/lcm.git && cd lcm && mkdir build && cd build && cmake .. && make -j"$(nproc)" && make install
 RUN echo "export PYTHONPATH=$PYTHONPATH:/usr/local/lib/python3.8/site-packages" > /root/.bashrc
+RUN echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/" > /root/.bashrc
 
 # Compile and install libfranka
 WORKDIR /root
@@ -46,6 +47,6 @@ WORKDIR /home
 RUN git clone --recursive https://github.com/Rooholla-KhorramBakht/FR3Py.git && cd FR3Py && python3 -m pip install -e . && cd fr3_gripper/ && python3 -m pip install .
 RUN cd /home/FR3Py/fr3_bridge && mkdir build && cd build && cmake .. && make -j4 && make install
 # Env vars for the nvidia-container-runtime.
-ENV NVIDIA_VISIBLE_DEVICES all
-ENV NVIDIA_DRIVER_CAPABILITIES graphics,utility,compute
+# ENV NVIDIA_VISIBLE_DEVICES all
+# ENV NVIDIA_DRIVER_CAPABILITIES graphics,utility,compute
 # COPY .. /pcd_cbf
