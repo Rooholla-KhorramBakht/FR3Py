@@ -71,6 +71,7 @@ class FR3Sim:
         self.dq_des = cmd
         self.tau_ff = cmd
         self.latest_command_stamp = time.time()
+        self.step()
         
     def step(self):
         if self.interface_type =='torque':

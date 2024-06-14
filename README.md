@@ -1,5 +1,10 @@
 # FR3Py
-FR3Py is unified Python simulation and hardware communication environment for Franka FR3 robots.
+FR3Py is unified Python simulation and hardware communication environment for Franka FR3 robots. The motivation of this project is to remove the burden of developing an easy interface for the robot, and minimize the effort required for going from simulation to real-world by provides an identical Python class to interface with simulation and the real robot. All you need to do, is changing one class!
+
+<p align="center">
+  <img src="docs/assets/openfig.png" alt="image" width="50%" height="auto"/>
+</p>
+
 
 ## Installation
 ### Prerequisite 

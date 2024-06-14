@@ -70,7 +70,7 @@ class FR3Real:
         if self.user_callback is not None:
             self.user_callback(self.joint_state)
 
-    def getStates(self):
+    def getJointStates(self):
         """
         Get the current joint angle, velocity, and torque of the robot.
 

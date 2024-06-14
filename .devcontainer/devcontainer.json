@@ -5,7 +5,7 @@
     "workspaceFolder": "/home/FR3Py",
     "service": "fr3py",
     "remoteUser": "root", 
-    "postCreateCommand": "cd /home/pcd-cbf && pip install -e .",
+    "postCreateCommand": "cd /home/FR3Py && pip install -e .",
     "customizations": {
       "vscode": {
         "extensions": [
