@@ -25,7 +25,7 @@ endmacro(create_executable ROBOT_NAME)
 
 # Add excecutables
 create_executable(fr3_joint_interface)
-create_executable(fr3_task_interface)
+# create_executable(fr3_task_interface)
 
 # Install targets
 install(TARGETS ${ALL_SOURCE_TARGETS}

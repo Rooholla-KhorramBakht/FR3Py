@@ -167,7 +167,7 @@ int main(int argc, char** argv)
       // rate limiting for the control loop (activated by default), the torque would anyway be
       // adjusted!
       std::array<double, 7> vel_d_rate_limited =
-          franka::limitRate(franka::kMaxJointVelocity, vel_d_calculated, state.dq_d);
+          franka::limitRate(franka::kMaxElbowVelocity, vel_d_calculated, state.dq_d);
 
       // Send torque command.
       return vel_d_rate_limited;

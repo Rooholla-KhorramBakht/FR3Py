@@ -40,13 +40,12 @@ RUN echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/" > /root/.bash
 
 # Compile and install libfranka
 WORKDIR /root
-RUN git clone --recursive https://github.com/frankaemika/libfranka --branch 0.10.0 && cd libfranka && mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF .. && cmake --build . && cpack -G DEB && dpkg -i libfranka*.deb 
+RUN git clone --recursive https://github.com/frankaemika/libfranka --branch 0.13.3 && cd libfranka && mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=OFF .. && cmake --build . && cpack -G DEB && dpkg -i libfranka*.deb 
 
 # Install the FR3Py components
 WORKDIR /home
 RUN git clone --recursive https://github.com/Rooholla-KhorramBakht/FR3Py.git && cd FR3Py && python3 -m pip install -e . && cd fr3_gripper/ && python3 -m pip install .
 RUN cd /home/FR3Py/fr3_bridge && mkdir build && cd build && cmake .. && make -j4 && make install
 # Env vars for the nvidia-container-runtime.
-# ENV NVIDIA_VISIBLE_DEVICES all
-# ENV NVIDIA_DRIVER_CAPABILITIES graphics,utility,compute
-# COPY .. /pcd_cbf
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES graphics,utility,compute
