@@ -152,7 +152,7 @@ class PinocchioModel:
             # same as above
             # dJdq = dJ/dt * dq, shape (6,)
             info[f"dJdq_{frame_name}"] = pin.getFrameAcceleration(
-                self.pin_robot.model, self.pin_robot.data, frame_id, self.jacobian_frame).vector
+                self.robot.model, self.robot.data, frame_id, self.jacobian_frame).vector
 
 
         # Get dynamics
