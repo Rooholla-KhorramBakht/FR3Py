@@ -120,9 +120,13 @@ class PinocchioModel:
         """
         assert q.shape == (9,), "q vector should be 9,"
         assert dq.shape == (9,), "dq vector should be 9,"
+
         self.robot.computeJointJacobians(q)
         self.robot.framesForwardKinematics(q)
         self.robot.centroidalMomentum(q, dq)
+        self.robot.forwardKinematics(q, dq, 0*q) # 0*q is the acceleration set to zero
+        pin.computeJointJacobiansTimeVariation(self.robot.model, self.robot.data, q, dq)
+        pin.updateFramePlacements(self.robot.model, self.robot.data)
         
         info = {"q": q,
                 "dq": dq}
