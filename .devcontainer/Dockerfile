@@ -26,11 +26,10 @@ RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.d
 RUN apt-get install git-lfs
 
 # Install Python dependencies
-RUN pip3 install scipy ipykernel warp-lang
-RUN pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+RUN pip3 install scipy ipykernel
 RUN pip3 install matplotlib opencv-python proxsuite
 RUN pip3 install isort black
-RUN pip3 install scikit-learn casadi mujoco pin
+RUN pip3 install mujoco pin
 
 
 # Compile and Install LCM

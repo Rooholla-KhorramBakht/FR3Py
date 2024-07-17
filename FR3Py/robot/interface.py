@@ -65,7 +65,10 @@ class FR3Real:
         q = np.hstack([msg.q])
         dq = np.hstack([msg.dq])
         T = np.hstack([msg.T])
-        self.joint_state = {"q": q[:7], "dq": dq[:7], "T": T[:7]}
+        M = np.array(msg.M).reshape(7,7)
+        G = np.hstack([msg.G])
+        C = np.hstack([msg.C])
+        self.joint_state = {"q": q, "dq": dq, "T": T, "M": M, "G": G, "C": C}
         # Call an arbitrary user callback
         if self.user_callback is not None:
             self.user_callback(self.joint_state)
