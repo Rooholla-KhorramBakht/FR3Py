@@ -72,11 +72,12 @@ void lcmThreadFunc(lcm::LCM* lcm)
 int main(int argc, char** argv)
 {
   // Check whether the required arguments were passed.
-  if (argc != 4)
+  if (argc < 4 || argc > 5)
   {
+    std::cout << argc;
     std::cerr << "Usage: " << argv[0] << " <robot hostname>"
               << " <robot name>"
-              << " <interface type>" << std::endl;
+              << " <interface type>" << "optional camera mass" << std::endl;
     return -1;
   }
   signal(SIGINT, signal_callback_handler);
@@ -137,7 +138,22 @@ int main(int argc, char** argv)
         { { 20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0 } }, { { 20.0, 20.0, 18.0, 18.0, 16.0, 14.0, 12.0 } },
         { { 20.0, 20.0, 20.0, 25.0, 25.0, 25.0 } }, { { 20.0, 20.0, 20.0, 25.0, 25.0, 25.0 } },
         { { 20.0, 20.0, 20.0, 25.0, 25.0, 25.0 } }, { { 20.0, 20.0, 20.0, 25.0, 25.0, 25.0 } });
-
+    // if an extra camera weight compensation argument is provided, set the camera weight (realsense d435)
+    if(argc==5)
+    {
+      std::cout << "Setting load for the Realsense D435i" << std::endl;
+      std::array<double, 3> offset;
+      std::array<double, 9> inertia;
+      double mass = 0.097;
+      offset[0] = 0.035;
+      offset[1] = 0.035;
+      offset[2] = 0.1;
+      for(int i=0; i<9; i++)
+      {
+        inertia[i] = 1e-7;
+      }
+      robot.setLoad(mass, offset, inertia);
+    }
     // Define callback for control loop.
     if (strcmp(argv[3], "torque") == 0)
     {
