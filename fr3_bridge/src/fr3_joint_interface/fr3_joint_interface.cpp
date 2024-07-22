@@ -160,6 +160,7 @@ int main(int argc, char** argv)
       std::function<franka::Torques(const franka::RobotState&, franka::Duration)> control_callback =
           [&cmdShm, &robot_name, &lcm, &lcm_state_msg, &model](const franka::RobotState& state,
                                                        franka::Duration /*period*/) -> franka::Torques {
+        // Get coriolis, gravity, and mass
         std::array<double, 7> coriolis = model.coriolis(state);
         std::array<double, 7> gravity = model.gravity(state);
         std::array<double, 49> mass = model.mass(state);
@@ -180,7 +181,9 @@ int main(int argc, char** argv)
         }
         
         for (size_t i = 0; i < 49; i++)
+        {
           lcm_state_msg.M[i] = mass[i];
+        }
         lcm.publish(robot_name + "_state", &lcm_state_msg);
         // How recent is the computed control command?
         uint64_t current_time =
@@ -221,8 +224,13 @@ int main(int argc, char** argv)
     else if (strcmp(argv[3], "velocity") == 0)
     {
       std::function<franka::JointVelocities(const franka::RobotState&, franka::Duration)> control_callback =
-          [&cmdShm, &robot_name, &lcm, &lcm_state_msg](const franka::RobotState& state,
+          [&cmdShm, &robot_name, &lcm, &lcm_state_msg, &model](const franka::RobotState& state,
                                                        franka::Duration /*period*/) -> franka::JointVelocities {
+        // Get coriolis, gravity, and mass
+        std::array<double, 7> coriolis = model.coriolis(state);
+        std::array<double, 7> gravity = model.gravity(state);
+        std::array<double, 49> mass = model.mass(state);
+
         // Get the current CPU time
         auto stamp_now = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> duration = stamp_now.time_since_epoch();
@@ -235,6 +243,13 @@ int main(int argc, char** argv)
           lcm_state_msg.q[i] = state.q[i];
           lcm_state_msg.dq[i] = state.dq[i];
           lcm_state_msg.T[i] = state.tau_J[i];
+          lcm_state_msg.G[i] = gravity[i];
+          lcm_state_msg.C[i] = coriolis[i];
+        }
+        
+        for (size_t i = 0; i < 49; i++)
+        {
+          lcm_state_msg.M[i] = mass[i];
         }
         lcm.publish(robot_name + "_state", &lcm_state_msg);
         // How recent is the computed control command?
