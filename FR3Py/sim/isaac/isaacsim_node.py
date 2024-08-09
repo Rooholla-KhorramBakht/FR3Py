@@ -99,8 +99,8 @@ for camera in cameras:
     ann.registerCamera(
         camera["prim_path"],
         camera["name"],
-        (0.0, 0.0, 0.3),  # xyz
-        (0., 0., 0., 1.), # xyzw
+        camera["translation"],  # xyz
+        camera["orientation"], # xyzw
         resolution=camera["resolution"],
     )
     for type in camera["type"]:

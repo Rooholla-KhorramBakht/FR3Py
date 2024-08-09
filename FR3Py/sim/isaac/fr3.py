@@ -105,6 +105,8 @@ class FR3(Articulation):
         return
 
     def toIsaacOrder(self, x):
+        if x.shape[0] == 7:
+            x = np.append(x, [0.0, 0.0])
         return x[self.to_isaac_index, ...]
 
     def toBulletOrder(self, x):
