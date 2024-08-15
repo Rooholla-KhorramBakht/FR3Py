@@ -286,7 +286,7 @@ int main(int argc, char** argv)
         return vel_d_calculated;
       };
       // Start real-time control loop.
-      robot.control(control_callback);
+      robot.control(control_callback,franka::ControllerMode::kJointImpedance,true,100.0);
     }
   }
   catch (const franka::Exception& ex)
